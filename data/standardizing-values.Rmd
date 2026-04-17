@@ -1,0 +1,77 @@
+---
+title: "standardizing-values"
+output: html_document
+---
+
+# Standardizing the somewhat-fixed columns
+
+All of them can have multiple values, by the way.
+
+## Column "Teaviku laad" ()
+All current values:
+```
+ [1] "Tõlkearvustus"                                     
+ [2] "Perioodikas ilmunud tõlge"                         
+ [3] "Kogumikus ilmunud tõlge"                           
+ [4] "Tõlkeraamat"                                       
+ [5] "Perioodikas ilmunud tõlge, Tõlkearvustus"          
+ [6] ""                                                  
+ [7] "Tõlkeraamnat"                                      
+ [8] "-"                                                 
+ [9] "Kogumikus ilmunud tõlge, Perioodikas ilmunud tõlge"
+[10] "tõlkeraamat"                                       
+```
+
+Standardizing:
+- split values from ", "
+- empty values "" and "-" standardize to NULL
+- names:
+  - "Tõlkearvustus"
+  - "Perioodikas ilmunud tõlge"
+  - "Kogumikus ilmunud tõlge"
+  - "Tõlkeraamat"
+with the first letter capitalized.
+
+
+## Column "Sihtrühm" ()
+All current values:
+```
+[1] "Täiskasvanute ilukirjandus"                           
+[2] "Laste- ja noortekirjandus"                            
+[3] ""                                                     
+[4] "Laste- ja noortekirjandus, Täiskasvanute ilukirjandus"
+[5] "Laste ja noortekirjandus"                             
+[6] "Täiskasvanute iluirjandus"                            
+[7] "laste- ja noortekirjandus"                            
+[8] "Täiskasvanute lukirjandus"                            
+```
+
+Standardizing:
+- split values from ", "
+- empty values "" standardize to NULL
+- names:
+  - "Täiskasvanute ilukirjandus"
+  - "Laste- ja noortekirjandus"
+with the first letter capitalized.
+
+
+
+## Column "Žanr" ()
+Standardizing:
+- split values from "; "
+- empty values "" standardize to NULL
+- put genres in all lowercase (after filtering out `Muzl, der gestiefelte Kater`)
+
+
+## Columns "lähtekeel" and "lähtekirjandus" ()
+Standardizing:
+- split values from "; "
+- empty values "" standardize to NULL
+- put genres in all lowercase (after filtering out `Muzl, der gestiefelte Kater`)
+
+
+
+
+
+
+  

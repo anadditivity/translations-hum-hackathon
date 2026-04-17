@@ -1,0 +1,68 @@
+---
+title: "data-exploration"
+output: html_document
+---
+
+```{r}
+data = read.csv("translation_data_possible_duplicates.csv")
+```
+
+```{r}
+data[duplicated(data),]
+```
+```{r}
+colnames(data)
+```
+
+```{r}
+unique(data$teaviku_laad)
+unique(data$sihtrühm)
+unique(data$Žanr)
+#unique(data$lähtekeel)
+#unique(data$lähtekirjandus)
+#unique(data$toimetaja)
+#unique(data$ilmumiskoht)
+#unique(data$kirjastaja)
+#unique(data$füüsiline_kirjeldus)
+#unique(data$sarjaandmed)
+#unique(data$number_leheküljed)
+#unique(data$märkused)
+
+# 1 to n: 1 book can have multiple publication types
+publication_type_translations = c('Tõlkearvustus' = 'Review of translation',
+  'Perioodikas ilmunud tõlge' = 'Translation published in periodicals',
+  'Tõlkeraamat' = 'Book translation',
+  'Kogumikus ilmunud tõlge' = 'Translation published in miscellanea')
+
+
+```
+
+```{r}
+unique(data$lähtekeel)
+
+```
+
+
+```{r}
+data %>% filter(lähtekirjandus == "")
+```
+```{r}
+data %>% filter(pealkiri == "")
+
+```
+
+
+```{r}
+unique(data$teaviku_laad)
+```
+
+
+
+
+
+
+
+
+
+
+
