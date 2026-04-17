@@ -1,0 +1,17 @@
+---
+title: "data-exploration"
+output: html_document
+---
+
+```{r}
+data = read.csv("data/translation_data_possible_duplicates.csv")
+```
+
+```{r}
+data[duplicated(data),]
+```
+
+```{r}
+
+```
+
