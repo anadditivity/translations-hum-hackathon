@@ -23,8 +23,8 @@ data[duplicated(data),] |> nrow()
 
 ```{r}
 translated_names <- c("record_type","target_audience", "title","author","original_title","genre","translator", "source_language", "source_literature","editor","author_of_foreword_or_afterword","place_of_publication","publisher", "year_of_publication", "physical_description", "edition_1", "series_information", "author_of_translated_book_under_review", "edition_2", "page_numbers", "content", "notes", "id") 
-
 #Translated with DeepL.com (free version)
+
 data_ed <- data
 names(data_ed) <- translated_names
 ```
@@ -37,6 +37,8 @@ data_ed |> filter_all(any_vars(str_detect(., ';'))) |> View()
 data_ed |> filter(str_detect(title, ';'))
 data_ed |> filter(str_detect(title, ',')) |> View()
 
+data_ed |> select(edition_1,edition_2) |> unique() |> View()
+
 # data_ed |> filter(across(.fns = all(), str_detect(";")))
 ```
 
@@ -44,6 +46,8 @@ Variables with ',' indicating two or more records:
 - source language 
 - source literature 
 - genre
+
+
 
 
 ```{r}
