@@ -9,6 +9,7 @@ library(ggplot2)
 library(dplyr)
 library(knitr)
 library(tidyr)
+library(psych)
 
 ```
 
@@ -45,27 +46,191 @@ colnames(data_ed)
 
 
 ```{r}
-data_ed |> filter(original_title == 'teadmata')
+
+# [1] "record_type"                            "target_audience"                        "title"                                 
+# [4] "author"                                 "original_title"                         "genre"                                 
+# [7] "translator"                             "source_language"                        "source_literature"                     
+#[10] "editor"                                 "author_of_foreword_or_afterword"        "place_of_publication"                  
+#[13] "publisher"                              "year_of_publication"                    "physical_description"                  
+#[16] "edition_1"                              "series_information"                     "author_of_translated_book_under_review"
+#[19] "edition_2"                              "page_numbers"                           "content"                               
+#[22] "notes"                                  "id"                                    
+
+data_ed |> filter(physical_description== '')
+```
+
+
+```{r}
+data_ed |> filter(str_detect(place_of_publication, '[~ˇ#¤%<>|_]'))
 ```
 
 ```{r}
-data_ed |> filter(str_detect(original_title, '[~ˇ#¤%<>|_]'))
+col
 ```
 
+
 ```{r}
-data_ed %>% filter(original_title == 'teadmata') %>% 
+data_ed %>% filter(record_type == "Tõlkearvustus") %>% filter(author_of_foreword_or_afterword != "")
 ```
 
 
 ## ONLY THE CLEANING LINES!
 ```{r}
+
 # title
 data_ed$title = data_ed$title %>% str_replace("#D", "") %>% str_replace("*", "")
+data_ed = data_ed %>% mutate(
+  title = case_when(
+    title == "" ~ NA,
+    T ~ title
+  )
+  )
+
+# author
+data_ed = data_ed %>% mutate(
+  author = case_when(
+    author == "" |
+    author == "π" |
+    author == "teadmata" ~ NA,
+    T ~ author
+  )
+  )
+
 # original_title
-data_ed$original_title = data_ed$original_title %>% str_replace("ˇteadmata", NA) %>% str_replace("teadmata", NA)
+data_ed = data_ed %>% mutate(
+  original_title = case_when(
+    original_title == "ˇteadmata" |
+    original_title == "teadmata" ~ NA,
+    T ~ original_title
+  )
+  )
+
+# genre
+data_ed = data_ed %>% mutate(
+  genre = case_when(
+    genre == "teadmata" ~ NA,
+    T ~ genre
+  )
+  )
+
+# source_language
+data_ed = data_ed %>% mutate(
+  source_language = case_when(
+    source_language == "" |
+    source_language == "teadmata" ~ NA,
+    T ~ source_language
+  )
+  )
+
+# source_literature
+data_ed = data_ed %>% mutate(
+  source_literature = case_when(
+    source_literature == "" |
+    source_literature == "teadmata" ~ NA,
+    T ~ source_literature
+  )
+  )
+
+# editor
+data_ed = data_ed %>% mutate(
+  editor = case_when(
+    editor == "" |
+    editor == "teadmata" ~ NA,
+    T ~ editor
+  )
+  )
+
+# author_of_foreword_or_afterword
+data_ed = data_ed %>% mutate(
+  author_of_foreword_or_afterword = case_when(
+    author_of_foreword_or_afterword == "" |
+    author_of_foreword_or_afterword == "teadmata" ~ NA,
+    T ~ author_of_foreword_or_afterword
+  )
+  )
+
+# place_of_publication
+data_ed = data_ed %>% mutate(
+  place_of_publication = case_when(
+    place_of_publication == "" |
+    place_of_publication == "teadmata" ~ NA,
+    T ~ place_of_publication
+  )
+  )
+
+# publisher
+data_ed = data_ed %>% mutate(
+  publisher = case_when(
+    publisher == "" |
+    publisher == "teadmata" ~ NA,
+    T ~ publisher
+  )
+  )
+
+# physical_description
+data_ed = data_ed %>% mutate(
+  physical_description = case_when(
+    physical_description == "" ~ NA,
+    T ~ physical_description
+  )
+  )
+
+# [1] "record_type"                            "target_audience"                        "title"                                 
+# [4] "author"                                 "original_title"                         "genre"                                 
+# [7] "translator"                             "source_language"                        "source_literature"                     
+#[10] "editor"                                 "author_of_foreword_or_afterword"        "place_of_publication"                  
+#[13] "publisher"                              "year_of_publication"                    "physical_description"                  
+#[16] "edition_1"                              "series_information"                     "author_of_translated_book_under_review"
+#[19] "edition_2"                              "page_numbers"                           "content"                               
+#[22] "notes"                                  "id"                                    
+
+# edition_1
+data_ed = data_ed %>% mutate(
+  edition_1 = case_when(
+    edition_1 == "ˇˇ" |
+    edition_1 == "" ~ NA,
+    T ~ edition_1
+  )
+  )
+
+# source_language
+data_ed = data_ed %>% mutate(
+  source_language = case_when(
+    source_language == "teadmata" |
+    source_language == "" ~ NA,
+    T ~ edition_1
+  )
+  )
+
+
 # edition_2
 data_ed$edition_2 = data_ed$edition_2 %>% str_replace("<p>", "") %>% str_replace("</p>", "") %>% str_replace('<span style="font-weight: 400">', '') %>% str_replace('</span>', '')
+data_ed = data_ed %>% mutate(
+  edition_2 = case_when(
+    edition_2 == "" ~ NA,
+    T ~ edition_2
+  )
+  )
+
 # translator
 data_ed$translator = data_ed$translator %>% str_replace("<<mf>>", "") %>% str_replace("|d", " ")
+data_ed = data_ed %>% mutate(
+  translator = case_when(
+    translator == "teadmata" |
+    translator == "" ~ NA,
+    T ~ translator
+  )
+)
+
+# genre
+data_ed$genre = data_ed$genre %>% str_replace("jutustusedd", "jutustused") %>% str_replace("nälestused", "mälestused") %>% str_replace("näidenid", "näidendid") %>% str_replace("rtomaanid", "romaanid") 
+data_ed = data_ed %>% mutate(
+  genre = case_when(
+    genre == "" ~ NA,
+    T ~ genre
+  )
+)
+
+
 ```
 
