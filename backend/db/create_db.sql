@@ -3,7 +3,7 @@ CREATE TABLE TRANSLATIONS (
 	author int,
 	translator int,
 	editor int,
-	comment_author int,
+	fore_afterword_author int,
 	title varchar(255) NOT NULL,
 	title_original varchar(255),
 	genre int,
@@ -16,10 +16,11 @@ CREATE TABLE TRANSLATIONS (
 	series int,
 	publication_type int,
 	target_audience int,
-	print_number varchar(255),
+	edition varchar(255),
 	n_pages varchar(64),
 	content varchar(255),
-	issue varchar(255)
+	issue varchar(255),
+	notes varchar(255)
 );
 
 CREATE TABLE REVIEWS (
@@ -28,7 +29,7 @@ CREATE TABLE REVIEWS (
 	author int,
 	translator int,
 	editor int,
-	comment_author int,
+	fore_afterword_author int,
 	title varchar(255) NOT NULL,
 	title_original varchar(255),
 	genre int,
@@ -41,10 +42,11 @@ CREATE TABLE REVIEWS (
 	series int,
 	publication_type int,
 	target_audience int,
-	print_number varchar(255),
+	edition varchar(255),
 	n_pages varchar(255),
 	content varchar(255),
-	issue varchar(255)
+	issue varchar(255),
+	notes varchar(255)
 ); -- future work: review table should not contain data on translated book, that should be in translations
 
 CREATE TABLE PERSONS (
