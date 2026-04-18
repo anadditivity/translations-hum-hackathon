@@ -16,6 +16,8 @@ review one book at a time
 one source lang, literatur
 not one pub loc 
 
+scrape bith year 
+
 
 ```{r}
 data[duplicated(data),] |> nrow()
@@ -37,7 +39,7 @@ data_ed |> filter_all(any_vars(str_detect(., ';'))) |> View()
 data_ed |> filter(str_detect(title, ';'))
 data_ed |> filter(str_detect(title, ',')) |> View()
 
-data_ed |> select(edition_1,edition_2) |> unique() |> View()
+# data_ed |> select(edition_1,edition_2) |> unique() |> View()
 
 # data_ed |> filter(across(.fns = all(), str_detect(";")))
 ```
@@ -47,6 +49,13 @@ Variables with ',' indicating two or more records:
 - source literature 
 - genre
 
+```{r}
+data_ed |> filter(str_detect(source_language, ','))
+data_ed |> filter(str_detect(source_literature, ','))
+data_ed |> filter(str_detect(genre, ','))
+
+data_ed |> View()
+```
 
 
 
@@ -62,6 +71,13 @@ data |> group_by(teaviku_laad) |> count()
 ```{r}
 data |> group_by(autor) |> count()
 ```
+
+perhaps good to remember 
+```
+(Schnübbe-) Schomburgk, Helene	1		
+(Schnübbe-)Schomburgk, Helene; Faber, K.
+```
+
 
 ```{r}
 all_authors <- data$autor |> unique()
@@ -86,6 +102,20 @@ all_authors[str_length(all_authors) < 4 & str_detect(all_authors,"-")]
 ```
 
 
+```{r}
+data_ed |> filter(str_length(author) < 6) |> View()
+data_ed |> filter(str_detect(title, 'Raamatu kohta')) # data can be taken from the sq brackets []
+```
+
+```{r}
+data_ed |> colnames()
+data_ed |> filter()
+```
+
+
+```{r}
+data_ed |> 
+```
 
 
 ```{r}
