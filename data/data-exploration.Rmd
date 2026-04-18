@@ -24,7 +24,30 @@ data[duplicated(data),] |> nrow()
 ```
 
 ```{r}
-translated_names <- c("record_type","target_audience", "title","author","original_title","genre","translator", "source_language", "source_literature","editor","author_of_foreword_or_afterword","place_of_publication","publisher", "year_of_publication", "physical_description", "edition_1", "series_information", "author_of_translated_book_under_review", "edition_2", "page_numbers", "content", "notes", "id") 
+translated_names <- c(
+  'teaviku_laad'="record_type",
+  'sihtrühm'="target_audience", 
+  'pealkiri'="title",
+  'autor'="author",
+  'originaal_pealkiri'="original_title",
+  'Žanr'="genre",
+  'tõlkija'="translator", 
+  'lähtekeel'="source_language", 
+  'lähtekirjandus'="source_literature",
+  'toimetaja'="editor",
+  'ees__järelsõna_autor'="comment",
+  'ilmumiskoht'="place_of_publication",
+  'kirjastaja'="publisher", 
+  'ilmumisaasta'="year_of_publication", 
+  'füüsiline_kirjeldus'="physical_description", 
+  'trükikordus'="print_number", 
+  'sarjaandmed'="series_information", 
+  'arvustatava_tõlkeraamatu_autor'="author_of_translated_book_under_review", 
+  'väljaanne'="issue", 
+  'number_leheküljed'="page_numbers", 
+  'sisu'="content", 
+  'märkused'="notes", 
+  'id'="id") 
 #Translated with DeepL.com (free version)
 
 data_ed <- data
