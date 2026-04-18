@@ -45,4 +45,4 @@ po/*~
 # RStudio Connect folder
 rsconnect/
 
-.env
+backend/.env
