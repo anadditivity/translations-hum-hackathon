@@ -12,10 +12,27 @@ library(tidyr)
 
 ```
 
-Teaviku laad
-
+Now then, let's get started
 
 ```{r}
-
+data = read.csv("data/translation_data_possible_duplicates.csv")
 ```
+
+```{r}
+translated_names <- c("record_type","target_audience", "title","author","original_title","genre","translator", "source_language", "source_literature","editor","author_of_foreword_or_afterword","place_of_publication","publisher", "year_of_publication", "physical_description", "edition_1", "series_information", "author_of_translated_book_under_review", "edition_2", "page_numbers", "content", "notes", "id") 
+#Translated with DeepL.com (free version)
+
+data_ed <- data
+names(data_ed) <- translated_names
+```
+
+```{r}
+data_ed
+```
+
+# First, the standardized values
+
+
+
+
 
