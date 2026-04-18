@@ -9,13 +9,354 @@ library(ggplot2)
 library(dplyr)
 library(knitr)
 library(tidyr)
+library(psych)
 
 ```
 
-Teaviku laad
+Now then, let's get started
+
+
+```{r}
+data = read.csv("data/translation_data_possible_duplicates.csv")
+new_names = read.csv('data/translated_names.csv')
+
+data_eng <- data
+colnames(data_eng) <- new_names$x
+```
+
+```{r}
+colnames(data_eng)
+```
+
+# section 1
+I'll work on getting the very weird values out
+
+Tyna is doing the standardization: splitting, making it conform.
+
+
+# This is the important thing for cleaning issue
+
+
+```{r}
+colnames(data_eng)
+```
 
 
 ```{r}
 
+# [1] "publication_type"                       "target_audience"                        "title"                                 
+# [4] "author"                                 "title_original"                         "genre"                                 
+# [7] "translator"                             "source_language"                        "source_literature"                     
+#[10] "editor"                                 "fore_afterword_author"                  "publication_location"                  
+#[13] "publisher"                              "publication_year"                       "physical_description"                  
+#[16] "edition"                                "series"                                 "author_of_translated_book_under_review_to_be_removed"
+#[19] "issue"                                  "n_pages"                                "content"                               
+#[22] "notes"                                  "id"                                    
+
+# [1] "publication_type"                       "target_audience"                        "title"                                               
+# [4] "author"                                 "title_original"                         "genre"                                               
+# [7] "translator"                             "source_language"                        "source_literature"                                   
+#[10] "editor"                                 "fore_afterword_author"                  "publication_location"                                
+#[13] "publisher"                              "publication_year"                       "physical_description"                                
+#[16] "edition"                                "series"                                 "author_of_translated_book_under_review_to_be_removed"
+#[19] "issue"                                  "n_pages"                                "content"                                             
+#[22] "notes"                                  "id"                                                  
+
+
+data_eng |> filter(physical_description== '')
 ```
+
+
+```{r}
+```
+
+```{r}
+col
+```
+
+
+```{r}
+data_eng %>% filter(publication_type == "Tõlkearvustus") %>% filter(fore_afterword_author != "")
+```
+
+
+## ONLY THE CLEANING LINES!
+## START COPY ##
+```{r}
+
+# title
+data_eng$title = data_eng$title %>% str_replace(fixed("#D"), "")
+data_eng$title = data_eng$title %>% str_replace(fixed("*"), "")
+data_eng = data_eng %>% mutate(
+  title = case_when(
+    title == "" ~ NA,
+    T ~ title
+  )
+  )
+
+# author
+data_eng = data_eng %>% mutate(
+  author = case_when(
+    author == "" |
+    author == "π" |
+    author == "teadmata" ~ NA,
+    T ~ author
+  )
+  )
+
+# title_original
+data_eng = data_eng %>% mutate(
+  title_original = case_when(
+    title_original == "ˇteadmata" |
+    title_original == "teadmata" ~ NA,
+    T ~ title_original
+  )
+  )
+
+# genre
+data_eng$genre = data_eng$genre %>% str_replace("jutustusedd", "jutustused")
+data_eng$genre = data_eng$genre %>% str_replace("nälestused", "mälestused") 
+data_eng$genre = data_eng$genre %>% str_replace("näidenid", "näidendid")
+data_eng$genre = data_eng$genre %>% str_replace("rtomaanid", "romaanid") 
+data_eng = data_eng %>% mutate(
+  genre = case_when(
+    genre == "" ~ NA,
+    T ~ genre
+  )
+)
+
+# translator
+data_eng$translator = data_eng$translator %>% str_replace("<<mf>>", "") 
+data_eng$translator = data_eng$translator %>% str_replace(fixed("|d"), " ")
+data_eng = data_eng %>% mutate(
+  translator = case_when(
+    translator == "teadmata" |
+    translator == "" ~ NA,
+    T ~ translator
+  )
+)
+
+# source_language
+data_eng = data_eng %>% mutate(
+  source_language = case_when(
+    source_language == "" |
+    source_language == "teadmata" ~ NA,
+    T ~ source_language
+  )
+  )
+
+# source_literature
+data_eng = data_eng %>% mutate(
+  source_literature = case_when(
+    source_literature == "" |
+    source_literature == "teadmata" ~ NA,
+    T ~ source_literature
+  )
+  )
+
+# editor
+data_eng = data_eng %>% mutate(
+  editor = case_when(
+    editor == "" |
+    editor == "teadmata" ~ NA,
+    T ~ editor
+  )
+  )
+
+# fore_afterword_author
+data_eng$fore_afterword_author = data_eng$fore_afterword_author %>% str_replace(fixed("ˇˇ"), "")
+data_eng = data_eng %>% mutate(
+  fore_afterword_author = case_when(
+    fore_afterword_author == "" |
+    fore_afterword_author == "teadmata" ~ NA,
+    T ~ fore_afterword_author
+  )
+  )
+
+# publication_location
+data_eng = data_eng %>% mutate(
+  publication_location = case_when(
+    publication_location == "" |
+    publication_location == "teadmata" ~ NA,
+    T ~ publication_location
+  )
+  )
+
+# publisher
+data_eng = data_eng %>% mutate(
+  publisher = case_when(
+    publisher == "" |
+    publisher == "teadmata" ~ NA,
+    T ~ publisher
+  )
+  )
+
+# physical_description
+data_eng$physical_description = data_eng$physical_description %>% str_replace(fixed("ˇ"), "")
+data_eng = data_eng %>% mutate(
+  physical_description = case_when(
+    physical_description == "" ~ NA,
+    T ~ physical_description
+  )
+  )
+
+# edition
+data_eng$edition = data_eng$edition %>% str_replace(fixed("ˇˇ"), "")
+data_eng = data_eng %>% mutate(
+  edition = case_when(
+    edition == "ˇˇ" |
+    edition == "" ~ NA,
+    T ~ edition
+  )
+  )
+
+# series
+data_eng = data_eng %>% mutate(
+  series = case_when(
+    series == "ˇˇ" |
+    series == "" ~ NA,
+    T ~ series
+  )
+  )
+
+# author_of_translated_book_under_review_to_be_removed
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace("<p>", "") 
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace("</p>", "")  
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace(fixed("ˇˇ"), "")
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace(fixed('<span style="font-weight: 400">'), "")
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace(fixed('</span>'), "")
+
+data_eng = data_eng %>% mutate(
+  author_of_translated_book_under_review_to_be_removed = case_when(
+    author_of_translated_book_under_review_to_be_removed == "" |
+    author_of_translated_book_under_review_to_be_removed == "teadmata" ~ NA,
+    T ~ issue
+  )
+  )
+data_eng = data_eng %>% mutate(
+  author_of_translated_book_under_review_to_be_removed = case_when(
+    author_of_translated_book_under_review_to_be_removed == "" |
+    author_of_translated_book_under_review_to_be_removed == "teadmata" ~ NA,
+    T ~ issue
+  )
+  )
+
+# issue
+data_eng$issue = data_eng$issue %>% str_replace("<p>", "") 
+data_eng$issue = data_eng$issue %>% str_replace("</p>", "") 
+data_eng$issue = data_eng$issue %>% str_replace('<span style="font-weight: 400">', '') 
+data_eng$issue = data_eng$issue %>% str_replace('</span>', '')
+data_eng = data_eng %>% mutate(
+  issue = case_when(
+    issue == "teadmata" |
+    issue == "" ~ NA,
+    T ~ issue
+  )
+  )
+
+# n_pages
+data_eng$n_pages = data_eng$n_pages %>% str_replace(fixed("ˇ"), "")
+data_eng = data_eng %>% mutate(
+  n_pages = case_when(
+    n_pages == "" ~ NA,
+    T ~ n_pages
+  )
+  )
+
+# content
+data_eng$content = data_eng$content %>% str_replace("<p>", "")
+data_eng$content = data_eng$content %>% str_replace("</p>", "")
+data_eng$content = data_eng$content %>% str_replace("&nbsp;", "") 
+data_eng$content = data_eng$content %>% str_replace("<br />", " ")
+data_eng = data_eng %>% mutate(
+  content = case_when(
+    content == "" ~ NA,
+    T ~ content
+  )
+  )
+
+
+# notes
+data_eng$notes = data_eng$notes %>% str_replace(fixed("ˇ"), "") 
+data_eng$notes = data_eng$notes %>% str_replace("<<mf>>", "")
+data_eng$notes = data_eng$notes %>% str_replace(fixed("ˇ"), "") 
+data_eng$notes = data_eng$notes %>% str_replace("<<mf>>", "")
+data_eng = data_eng %>% mutate(
+  notes = case_when(
+    notes == "" ~ NA,
+    T ~ notes
+  )
+  )
+
+```
+
+```{r}
+# Second cleaning block, mostly duplicating
+
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace("<p>", "") 
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace("</p>", "")  
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace(fixed("ˇˇ"), "")
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace(fixed('<span style="font-weight: 400">'), "")
+data_eng$author_of_translated_book_under_review_to_be_removed = data_eng$author_of_translated_book_under_review_to_be_removed %>% str_replace(fixed('</span>'), "")
+
+
+data_eng$content = data_eng$content %>% str_replace("<p>", "")
+data_eng$content = data_eng$content %>% str_replace("</p>", "")
+data_eng$content = data_eng$content %>% str_replace("&nbsp;", "") 
+data_eng$content = data_eng$content %>% str_replace("<br />", " ")
+
+data_eng = data_eng %>% mutate(
+  notes = case_when(
+    notes == "" ~ NA,
+    T ~ notes
+  )
+  )
+
+data_eng$issue = data_eng$issue %>% str_replace("<p>", "") 
+data_eng$issue = data_eng$issue %>% str_replace("</p>", "") 
+data_eng$issue = data_eng$issue %>% str_replace('<span style="font-weight: 400">', '') 
+data_eng$issue = data_eng$issue %>% str_replace('</span>', '')
+data_eng = data_eng %>% mutate(
+  issue = case_when(
+    issue == "teadmata" |
+    issue == "" ~ NA,
+    T ~ issue
+  )
+  )
+
+# notes
+data_eng$notes = data_eng$notes %>% str_replace(fixed("ˇ"), "") 
+data_eng$notes = data_eng$notes %>% str_replace("<<mf>>", "")
+data_eng$notes = data_eng$notes %>% str_replace(fixed("ˇ"), "") 
+data_eng$notes = data_eng$notes %>% str_replace("<<mf>>", "")
+data_eng = data_eng %>% mutate(
+  notes = case_when(
+    notes == "" ~ NA,
+    T ~ notes
+  )
+  )
+
+```
+## END COPY ##
+
+
+```{r}
+
+# [1] "publication_type"                            "target_audience"                        "title"                                 
+# [4] "author"                                 "title_original"                         "genre"                                 
+# [7] "translator"                             "source_language"                        "source_literature"                     
+#[10] "editor"                                 "fore_afterword_author"        "publication_location"                  
+#[13] "publisher"                              "publication_year"                    "physical_description"                  
+#[16] "edition"                              "series"                     "author_of_translated_book_under_review_to_be_removed"
+#[19] "issue"                              "n_pages"                           "content"                               
+#[22] "notes"                                  "id"                                    
+
+data_eng %>% filter(str_detect(issue, '[~ˇ#¤%<>|_+•¹@£$€]'))
+s```
+
+
+
+
+
+
 
