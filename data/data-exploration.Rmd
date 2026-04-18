@@ -13,10 +13,10 @@ data = read.csv("translation_data_possible_duplicates.csv")
 book being part of one series at a time 
 one target audience
 review one book at a time 
-one source lang, literatur
+one source lang, literature
 not one pub loc 
 
-scrape bith year 
+scrape birth year 
 
 
 ```{r}
@@ -25,34 +25,42 @@ data[duplicated(data),] |> nrow()
 
 ```{r}
 translated_names <- c(
-  'teaviku_laad'="record_type",
+  'teaviku_laad'="publication_type",
   'sihtrühm'="target_audience", 
   'pealkiri'="title",
   'autor'="author",
-  'originaal_pealkiri'="original_title",
+  'originaal_pealkiri'="title_original",
   'Žanr'="genre",
   'tõlkija'="translator", 
   'lähtekeel'="source_language", 
   'lähtekirjandus'="source_literature",
   'toimetaja'="editor",
-  'ees__järelsõna_autor'="comment",
-  'ilmumiskoht'="place_of_publication",
+  'ees__järelsõna_autor'="comment_author",
+  'ilmumiskoht'="publisher_location",
   'kirjastaja'="publisher", 
-  'ilmumisaasta'="year_of_publication", 
+  'ilmumisaasta'="publication_year", 
   'füüsiline_kirjeldus'="physical_description", 
   'trükikordus'="print_number", 
-  'sarjaandmed'="series_information", 
-  'arvustatava_tõlkeraamatu_autor'="author_of_translated_book_under_review", 
+  'sarjaandmed'="series", 
+  'arvustatava_tõlkeraamatu_autor'="author_of_translated_book_under_review_to_be_removed", 
   'väljaanne'="issue", 
-  'number_leheküljed'="page_numbers", 
+  'number_leheküljed'="n_pages", 
   'sisu'="content", 
   'märkused'="notes", 
   'id'="id") 
+
+write.csv(translated_names, 'translated_names.csv')
+
 #Translated with DeepL.com (free version)
 
 data_ed <- data
 names(data_ed) <- translated_names
 ```
+
+```{r}
+data_eng |> select(series_information) |> unique()
+```
+
 
 
 ```{r}
@@ -79,8 +87,6 @@ data_ed |> filter(str_detect(genre, ','))
 
 data_ed |> View()
 ```
-
-
 
 ```{r}
 data |> group_by(sihtrühm) |> count() 
