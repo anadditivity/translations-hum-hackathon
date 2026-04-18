@@ -214,7 +214,6 @@ Maila,Talvio,1871.0,1951.0
 István,Szomaházy,1864.0,1927.0
 Bartholomäus,Szalóczy,,
 Carmen,Sylva,1843.0,1916.0
-Theodor,Sydow,1773.0,1855.0
 Margarethe von,Sydow,1869.0,1945.0
 Herbert,Swinden,,
 Aleksander,Świętochowski,1849.0,1938.0
@@ -2662,7 +2661,6 @@ Karl,Menning,1874.0,1941.0
 K.,Mendes,,
 Catulle,Mendès,1841.0,1909.0
 Irene,Mendelin,1864.0,1944.0
-Elisabet,Melsas,,
 Pavel,Melnikov,1818.0,1883.0
 A.,Mekelur-Scholl,,
 Wilhelm ?-,Mejo,1888.0,
@@ -3424,7 +3422,6 @@ Th.,Galetzki,,
 Anna,Gade,,
 Aimée,Gaber,,
 Georg von der,Gabelentz,1868.0,1940.0
-Maupassant Guy,de,1850.0,1893.0
 G.,K.,,
 Otto,Funcke,1836.0,1910.0
 ,Fulvia,,
@@ -3898,7 +3895,6 @@ E. von,Barfus,,
 Thorkil,Barfod,1889.0,1947.0
 Rene de,Barfaus,,
 Henri,Baraude,1859.0,1950.0
-Jevgeni,Baratõnski,1800.0,1844.0
 Mihhail,Barantsov,,
 Kazimir,Barantsevitš,1851.0,1927.0
 P.,Banhomme,,
@@ -4517,7 +4513,6 @@ Vsevolod,Valde,1906.0,1942.0
 Ludvig,Valdau,,
 O.,Vald,,
 M.,Valakorpi,,
-A.,Vajala,,
 Juhan,Väinaste,1883.0,1969.0
 Aleksander,Vaigla,1896.0,1941.0
 Petras,Vaičiūnas,1890.0,1959.0
@@ -6772,7 +6767,6 @@ A.,Lisberger,,
 Dionys,Lippa,,
 D.,Lippa,,
 Elm.,Liping,,
-Elen.,Liping,,
 J.,Linström,,
 H.,Linnuse,,
 Leo,Linger,,
@@ -8115,7 +8109,6 @@ Jules de,Goncourt,1830.0,1870.0
 Antonina,Golubeva,1899.0,1989.0
 G.,Golubev,,
 Peggy von der,Goltz,,
-Mihhail,Golodnõi,1903.0,1949.0
 M.,Golodnõi,,
 Paul,Golmik,,
 E.,Golland,,
@@ -15699,6 +15692,7 @@ Shirley,Barber,1935.0,2023.0
 Noel,Barber,1909.0,1988.0
 H. D.,Barber,,
 Vytautas,Barauskas,1934.0,2015.0
+Jevgeni,Baratõnski,1800.0,1844.0
 Natalja,Baranskaja,1908.0,2004.0
 ,Baranovski,,
 N.,Baranov,,
@@ -17582,7 +17576,6 @@ Jeremei,Aipin,1948.0,
 Cesar,Aguilera,,
 Marina,Agejeva,,
 Aðalsteinn Ásberg,Sigurðsson,1955.0,
-Aravind,Adiga,1974.0,
 Richard,Adang,1953.0,
 Swan,Adamson,,
 Andrew,Adamson,,
@@ -17595,9 +17588,10 @@ Nikolai,Abramov,1961.0,2016.0
 Peter,Abraham,,
 Çingiz,Abdullayev,1959.0,
 Jeff,Abbott,,
+W.,Wagner-Stürmer,,
+Jan,Brinker,,
 Nisson,Zeleranski,1915.0,1976.0
 Galina,Leonova,1946.0,2024.0
-W.,Wagner-Stürmer,,
 Viktor,Vutšetitš,1935.0,2011.0
 Jekaterina,Suvorina,,
 Lazars,Volfs,,
@@ -17622,11 +17616,17 @@ James David,Horan,1914.0,1981.0
 Ivan,Golovtšenko,1918.0,1992.0
 Alexandre vanem,Dumas,1802.0,1870.0
 Al.,Brühl,,
-Jan,Brinker,,
 Jerzy,Bogurad,1852.0,1928.0
 Aleksei,Azarov,,
 Vladislav,Kudravtsev,,
 Juri,Avdejenko,1933.0,1982.0
+Theodor,Sydow,1773.0,1855.0
+Elisabet,Melsas,,
+A.,Vajala,,
+Mihhail,Golodnõi,1903.0,1949.0
+Elen.,Liping,,
+Aravind,Adiga,1974.0,
+Maupassant Guy,de,1850.0,1893.0
 Jüri,Meomuttel,1868.0,1948.0
 J.,Mällow,,
 Jaan,Leppik,1861.0,1943.0
@@ -18599,7 +18599,6 @@ Kaarel Robert,Pusta,1883.0,1964.0
 ,Oss,,
 ,P-lus,,
 R.,Lesta,,
-,Henrik,,
 Rudolf,Lesta,1885.0,1941.0
 ,F.J.R-e.,,
 H.,Jänes,,
@@ -19051,7 +19050,6 @@ A.,Rebane,,
 Leeni,Vesterinen (Ploompuu),1886.0,1972.0
 Johanna,Kitzberg,1876.0,1964.0
 S.,Karp,,
-Jaan,Kitzberg,1838.0,1915.0
 Jüri,Markus,1876.0,1929.0
 H.,Kuriks,,
 Julie,Steinmann,1883.0,1957.0
@@ -19102,9 +19100,6 @@ R.,J-genfeldt,,
 Toomas,Algma,1896.0,1971.0
 ,Rr.,,
 I.,Rr.,,
-Karl,Reitav,1897.0,1961.0
-Harri,Moora,1900.0,1968.0
-Rudolf,Peerna,1864.0,
 Villem,Tepe,,
 A.,Saaremets,,
 O.,Prick,,
@@ -19197,6 +19192,7 @@ J.,Lp,,
 T.,Tomp,,
 Voldemar,Lüdig,1878.0,
 Johannes,Vahtkerl,1886.0,
+Karl,Reitav,1897.0,1961.0
 "Gustav, ?-",Kajak,1920.0,
 Peeter,Grünfeldt,1865.0,1938.0
 ,P.V-k.,,
@@ -19284,7 +19280,6 @@ Linda,Ehwei,,
 August,Westrén-Doll,1882.0,1961.0
 Jaan,Lilienbach,1870.0,1928.0
 Mart,Malewa,,
-E.,Kirotar,,
 O. Th.,P-k.,,
 Joh.,Lään,,
 J.,Johannson,,
@@ -19329,6 +19324,7 @@ M.,Einar,,
 M.,Einer,,
 ,saksa,,
 Markus,Univer,1878.0,1950.0
+Rudolf,Peerna,1864.0,
 A.,Kreen,,
 ,vene,,
 Hugo,Raudsepp,1883.0,1953.0
@@ -19431,6 +19427,7 @@ M.,Gr.,,
 J.,Kalkun,,
 Iseõppinud,ladinlane,,
 August,Paaver,1874.0,1930.0
+Harri,Moora,1900.0,1968.0
 CI.,W.,,
 "Andrus,",Saareste,1892.0,1964.0
 Peeter,Grünfeldt,1865.0,1942.0
@@ -19471,6 +19468,7 @@ Elli,Jäger,,
 O. Th.,P.,,
 ,-La.,,
 J. V.,Ronimus,1865.0,1909.0
+E.,Kirotar,,
 Harry,Rudolff,,
 R. D.,Juksaar,,
 Voldemar,Liedich,,
@@ -20054,7 +20052,6 @@ A.,Speek,,
 Ilmar,Rebane,1912.0,1995.0
 Riimi,Sepp,,
 M. D.,Heliode,,
-ata,tead,,
 ,Ramle,,
 ,-elle,,
 Ellen,Mölder,1906.0,
@@ -20215,7 +20212,6 @@ Lilli,Varing,,
 Gustav ?-,Tammes,1926.0,
 August,Lukin,1888.0,1942.0
 Alice-Gullan,Gross,,
-A. H,Tammsaare,1878.0,1940.0
 ,M-v-m.,,
 M.,V-m.,,
 Helmut,Pürkop,1905.0,1974.0
@@ -23215,6 +23211,10 @@ Aliide,Elken,,
 M.,Piirimägi,,
 T.,Mirring,,
 E.,Palm,,
+,Henrik,,
+Jaan,Kitzberg,1838.0,1915.0
+ata,tead,,
+A. H,Tammsaare,1878.0,1940.0
 ,prantsuse,,
 ,rootsi,,
 Bernhard,Linde,1886.0,
