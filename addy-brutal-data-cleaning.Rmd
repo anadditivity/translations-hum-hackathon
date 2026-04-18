@@ -352,7 +352,7 @@ data_eng = data_eng %>% mutate(
 #[22] "notes"                                  "id"                                    
 
 data_eng %>% filter(str_detect(issue, '[~ˇ#¤%<>|_+•¹@£$€]'))
-s```
+```
 
 
 
