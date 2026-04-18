@@ -7,9 +7,12 @@ services:
       - 5432:5432
     env_file:
       - .env
+    environment:
+      - POSTGRES_DB=translation_db
     volumes:
       - ${PWD}/db-data/:/var/lib/postgresql/data/:z
       - ${PWD}/db/create_db.sql:/docker-entrypoint-initdb.d/init.sql:z
+
 
   backend:
     image: translation/api

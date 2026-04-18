@@ -1,17 +1,10 @@
-from fastapi import FastAPI, Depends
-from db import engine, get_session
-from contextlib import asynccontextmanager
-from sqlmodel import SQLModel
+from fastapi import FastAPI
 
 app = FastAPI()
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    SQLModel.metadata.create_all(engine)
-    yield
 
 @app.get("/")
-async def read_root(session=Depends(get_session)):
+async def read_root():
     return {"Hello": "World"}
 
 

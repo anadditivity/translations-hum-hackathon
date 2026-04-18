@@ -2,4 +2,3 @@ import os
 
 DB_USER:str = os.getenv('POSTGRES_USER', 'env var username not found')
 DB_PASSWORD:str = os.getenv('POSTGRES_PASSWORD', 'env var password not found')
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@db:5432"
