@@ -11,7 +11,7 @@ In this file functional pipeline: raw -> processed data
 library(dplyr)
 library(stringr)
 
-data = read.csv("data/translation_data_possible_duplicates.csv")
+data = read.csv("data/translation_data_full_duplicates.csv")
 new_names = read.csv('data/translated_names.csv')
 
 data_eng <- data
@@ -55,9 +55,11 @@ write.csv(translated_names, 'data/translated_names.csv')
 
 # Standardisation of the variables 
 
-1. standardise 
-2. divide dataset into: one category X multiple categories in one var 
-3. split the data points with multiple values in one categories into multiple rows
+
+1. split the data points with multiple values in one categories into multiple rows
+2. standardise 
+3. divide dataset into: one category X multiple categories in one var 
+  - using the existing id I can then match the duplicates 
 4. 
 
 
@@ -103,6 +105,50 @@ data_eng <- data_eng |> mutate(target_audience = case_when(
   T ~ target_audience
 ))
 ```
+
+
+## genre
+
+Standardizing:
+- split values from "; "
+- empty values "" standardize to NULL
+- put genres in all lowercase (after filtering out `Muzl, der gestiefelte Kater`)
+- all values are in plural 
+
+```{r}
+data_eng <- data_eng |> mutate(genre = case_when(
+  genre %in% c(" ", "", 'j') ~ NA, 
+  genre == "romaanidq" ~ "romaanid",
+  genre == "Muzl, der gestiefelte Kater" ~ NA, 
+  genre == "romaan" ~ "romaanid", 
+  genre == "rtomaanid" ~ "rommanid",
+  genre == "dramatiseering" ~ "dramatiseeringud", 
+  genre == "jutt" ~ "jutud", 
+  genre == "jutus" ~ "jutud", 
+  genre == "jutustus" ~ "jutustused", 
+  genre == "jutustuse" ~ "jutustused", 
+  genre == "jutustusedd" ~ "jutustused", 
+  genre == "näidenid" ~ "näidendid", 
+  T ~ tolower(genre)
+))
+```
+
+
+# duplicates removal 
+```{r}
+data_eng <- data_eng[!duplicated(data_eng),] 
+```
+
+# write processed data
+
+```{r}
+write.csv(data_eng, 'data/processed_translation_data_1.csv')
+```
+
+
+
+
+
 
 
 
