@@ -143,6 +143,7 @@ data_eng <- data_eng |> filter(!str_detect(target_audience,', ')) |> rbind(A) |>
 data_eng <- data_eng |> mutate(target_audience = case_when(
   target_audience %in% c(" ", "") ~ NA, 
   target_audience == "laste- ja noortekirjandus" ~ "Laste- ja noortekirjandus", 
+  target_audience == "Täiskasvanute iluirjandus" ~ "Täiskasvanute ilukirjandus", 
   target_audience == "Täiskasvanute lukirjandus" ~ "Täiskasvanute ilukirjandus", 
   target_audience == "Laste ja noortekirjandus" ~ "Laste- ja noortekirjandus", 
   T ~ target_audience
