@@ -4,14 +4,94 @@ output: html_document
 ---
 
 ```{r}
+library(dplyr)
+library(stringr)
+
 data = read.csv("translation_data_possible_duplicates.csv")
 ```
 
+book being part of one series at a time 
+one target audience
+review one book at a time 
+one source lang, literatur
+not one pub loc 
+
+
 ```{r}
-data[duplicated(data),]
+data[duplicated(data),] |> nrow()
 ```
 
 ```{r}
+translated_names <- c("record_type","target_audience", "title","author","original_title","genre","translator", "source_language", "source_literature","editor","author_of_foreword_or_afterword","place_of_publication","publisher", "year_of_publication", "physical_description", "edition_1", "series_information", "author_of_translated_book_under_review", "edition_2", "page_numbers", "content", "notes", "id") 
 
+#Translated with DeepL.com (free version)
+data_ed <- data
+names(data_ed) <- translated_names
+```
+
+
+```{r}
+# search also for those who are not expected to have ',' 
+data_ed |> filter_all(any_vars(str_detect(., ';'))) |> View()
+
+data_ed |> filter(str_detect(title, ';'))
+data_ed |> filter(str_detect(title, ',')) |> View()
+
+# data_ed |> filter(across(.fns = all(), str_detect(";")))
+```
+
+Variables with ',' indicating two or more records: 
+- source language 
+- source literature 
+- genre
+
+
+```{r}
+data |> group_by(sihtrühm) |> count() 
+```
+
+
+```{r}
+data |> group_by(teaviku_laad) |> count() 
+```
+
+```{r}
+data |> group_by(autor) |> count()
+```
+
+```{r}
+all_authors <- data$autor |> unique()
+# all_authors[str_detect(all_authors,';')] # more authors in one record 
+all_authors[str_detect(all_authors,'[0-9]')] # random
+all_authors[str_detect(all_authors,'[0-9]') & !str_detect(all_authors,'[A-Z]') & !str_detect(all_authors,'[a-z]')]
+all_authors[!str_detect(all_authors,'[0-9]')]
+all_authors[str_length(all_authors) < 6]
+all_authors[str_detect(all_authors,"-")]
+all_authors[str_detect(all_authors,"\\(")]
+all_authors[str_detect(all_authors,"\\[")]
+all_authors[str_detect(all_authors,"\\?")]
+
+#summary: 
+
+#  weird things when auth < 6 
+#  more authors when ; 
+#  rather practical years
+#  pseud
+all_authors[str_length(all_authors) < 4 & str_detect(all_authors,"\\.")]
+all_authors[str_length(all_authors) < 4 & str_detect(all_authors,"-")]
+```
+
+
+
+
+```{r}
+length(data$id |> unique())
+data |> nrow()
+```
+
+```{r}
+library(ggplot2)
+data |>  
+  ggplot(aes(x=ilmumisaasta)) + geom_histogram()
 ```
 
