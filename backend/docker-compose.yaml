@@ -8,8 +8,8 @@ services:
     env_file:
       - .env
     volumes:
-        - ${PWD}/db-data/:/var/lib/postgresql/data/
-        - ${PWD}/db/create_db.sql:/docker-entrypoint-initdb.d/init.sql
+      - ${PWD}/db-data/:/var/lib/postgresql/data/:z
+      - ${PWD}/db/create_db.sql:/docker-entrypoint-initdb.d/init.sql:z
 
   backend:
     image: translation/api
@@ -18,4 +18,4 @@ services:
     ports:
       - 8000:8000
     volumes:
-      - ${PWD}/run.sh:/app/run.sh
+      - ${PWD}/run.sh:/app/run.sh:z
