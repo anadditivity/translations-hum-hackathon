@@ -11,3 +11,9 @@ services:
         - ${PWD}/db-data/:/var/lib/postgresql/data/
         - ${PWD}/db/create_db.sql:/docker-entrypoint-initdb.d/init.sql
 
+  backend:
+    image: translation/api
+    build:
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
