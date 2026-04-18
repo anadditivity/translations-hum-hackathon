@@ -19,3 +19,5 @@ services:
       - 8000:8000
     volumes:
       - ${PWD}/run.sh:/app/run.sh:z
+    env_file:
+      - .env
