@@ -4,4 +4,4 @@ COPY pyproject.toml .
 COPY ./src /app/src
 ENV PATH="/app/.venv/bin:$PATH"
 RUN uv sync
-CMD ["uv", "run", "fastapi", "dev", "/app/src/main.py"]
+CMD ["run.sh"]
