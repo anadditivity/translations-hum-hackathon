@@ -4,11 +4,20 @@ output: html_document
 ---
 
 TODO: 
+keep track of interventions and deletion 
+reviews and translation - different? 
 - [] go through this document and standardize
+- [] split names: first name, last name
 
 ```{r}
 data = read.csv("data/translation_data_possible_duplicates.csv")
+new_names = read.csv('data/translated_names.csv')
 data |> colnames()
+data_eng <- data
+colnames(data_eng) <- new_names$x
+data_eng |> colnames()
+
+data_to_be_split # rows of vars with more values 
 ```
 
 # Standardizing the somewhat-fixed columns
@@ -40,11 +49,30 @@ Standardizing:
   - "Tõlkeraamat"
 with the first letter capitalized.
 
+
+```{r}
+data_eng |> names()
+data_eng |> select(publisher) |> filter(str_detect(publisher, 'ja ')) |> unique()
+``` 
+
+
 ```{r}
 data |> select(teaviku_laad) |> unique()
+data_eng |> select(publication_type) |> unique()
 
-data_modified <- data |> 
-  mutate(teaviku_laad)
+data_eng$publication_type |> unique()
+
+# data_eng |> mutate(publication_type = case_when(
+#   (data_eng$publication_type == "" | data_eng$publication_type == "-") ~ NULL, 
+#   T ~ publication_type))
+
+data_eng <- data_eng |> mutate(publication_type = case_when(
+  publication_type == "" | 
+    publication_type == " " | 
+    publication_type == "-"  ~ NA, 
+  T ~ publication_type ))
+
+data_to_be_split <- data_eng |> filter(publication_type == "-")
 ```
 
 
@@ -68,6 +96,11 @@ Standardizing:
   - "Täiskasvanute ilukirjandus"
   - "Laste- ja noortekirjandus"
 with the first letter capitalized.
+
+```{r}
+
+```
+
 
 
 ## Column "Žanr" ()
