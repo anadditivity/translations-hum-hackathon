@@ -27,12 +27,45 @@ names(data_ed) <- translated_names
 ```
 
 ```{r}
-data_ed
+data_ed |> filter(str_detect(edition_2, '<')) %>% select(, edition_2)
 ```
 
-# First, the standardized values
+# section 1
+I'll work on getting the very weird values out
+
+Tyna is doing the standardization: splitting, making it conform.
 
 
+# This is the important thing for cleaning edition_2
 
 
+```{r}
+colnames(data_ed)
+```
+
+
+```{r}
+data_ed |> filter(original_title == 'teadmata')
+```
+
+```{r}
+data_ed |> filter(str_detect(original_title, '[~ˇ#¤%<>|_]'))
+```
+
+```{r}
+data_ed %>% filter(original_title == 'teadmata') %>% 
+```
+
+
+## ONLY THE CLEANING LINES!
+```{r}
+# title
+data_ed$title = data_ed$title %>% str_replace("#D", "") %>% str_replace("*", "")
+# original_title
+data_ed$original_title = data_ed$original_title %>% str_replace("ˇteadmata", NA) %>% str_replace("teadmata", NA)
+# edition_2
+data_ed$edition_2 = data_ed$edition_2 %>% str_replace("<p>", "") %>% str_replace("</p>", "") %>% str_replace('<span style="font-weight: 400">', '') %>% str_replace('</span>', '')
+# translator
+data_ed$translator = data_ed$translator %>% str_replace("<<mf>>", "") %>% str_replace("|d", " ")
+```
 
