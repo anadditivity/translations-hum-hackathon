@@ -19,7 +19,6 @@ colnames(data_eng) <- new_names$x
 ```
 
 
-
 # translation of variable names 
 
 ```{r, eval=F}
@@ -53,4 +52,66 @@ translated_names <- c(
 write.csv(translated_names, 'data/translated_names.csv')
 ```
 
+
+# Standardisation of the variables 
+
+1. standardise 
+2. divide dataset into: one category X multiple categories in one var 
+3. split the data points with multiple values in one categories into multiple rows
+4. 
+
+
+## publication_type 
+
+Standardizing:
+- split values from ", "
+- empty values "" and "-" standardize to NULL
+- names:
+  - "Tõlkearvustus"
+  - "Perioodikas ilmunud tõlge"
+  - "Kogumikus ilmunud tõlge"
+  - "Tõlkeraamat"
+with the first letter capitalized.
+
+```{r}
+data_eng <- data_eng |> mutate(publication_type = case_when(
+  publication_type %in% c("", " ", "-")  ~ NA, 
+  publication_type == "Tõlkeraamnat" ~ "Tõlkeraamat", 
+  publication_type == "tõlkeraamat" ~ "Tõlkeraamat",
+  T ~ publication_type 
+)) 
+```
+
+## target_audience 
+
+Standardizing:
+- split values from ", "
+- empty values "" and "-" standardize to NULL
+- names:
+  - "Tõlkearvustus"
+  - "Perioodikas ilmunud tõlge"
+  - "Kogumikus ilmunud tõlge"
+  - "Tõlkeraamat"
+with the first letter capitalized.
+
+```{r}
+data_eng <- data_eng |> mutate(target_audience = case_when(
+  target_audience %in% c(" ", "") ~ NA, 
+  target_audience == "laste- ja noortekirjandus" ~ "Laste- ja noortekirjandus", 
+  target_audience == "Täiskasvanute lukirjandus" ~ "Täiskasvanute ilukirjandus", 
+  target_audience == "Laste ja noortekirjandus" ~ "Laste- ja noortekirjandus", 
+  T ~ target_audience
+))
+```
+
+
+
+
+## removing the multiples 
+
+```{r}
+data_to_be_split <- data_eng |> filter(str_detect(publication_type, ", "))
+data_eng <- data_eng |> filter(!str_detect(publication_type, ", ") & 
+                                 !str_detect(target_audience, ', '))
+```
 
