@@ -5,14 +5,14 @@ output: html_document
 
 # Pipeline 
 
-In this file functional pipeline: raw -> processed data 
+In this file functional pipeline: raw, but split data into processed data 
 
 ```{r setup}
 library(dplyr)
 library(stringr)
 
-data = read.csv("data/translation_data_full_duplicates.csv")
-new_names = read.csv('data/translated_names.csv')
+data <- read.csv("data/exploded_data.csv")
+new_names <- read.csv('data/translated_names.csv')
 
 data_eng <- data
 colnames(data_eng) <- new_names$x
@@ -51,6 +51,7 @@ translated_names <- c(
 
 write.csv(translated_names, 'data/translated_names.csv')
 ```
+
 
 
 # Standardisation of the variables 
@@ -129,12 +130,263 @@ data_eng <- data_eng |> mutate(genre = case_when(
   genre == "jutustuse" ~ "jutustused", 
   genre == "jutustusedd" ~ "jutustused", 
   genre == "näidenid" ~ "näidendid", 
+  genre == "nälestused" ~ "mälestused", 
   T ~ tolower(genre)
 ))
 ```
 
 
+
+## source_language and source_literature
+
+Columns "lähtekeel" and "lähtekirjandus" ()
+Standardizing:
+- split values from "; "
+- empty values "" standardize to NA 
+- hyphen '-' (dash) after every vana
+
+```{r}
+data_eng <- data_eng |> mutate(source_language = case_when(
+  source_language %in% c(" ", "", "teadmata", "tedamata", 
+                         "teadmata/undetermined") ~ NA,
+  source_language %in% c("prantuse", "prantsuse?")~ "prantsuse", 
+  source_language == "sakas" ~ "saksa", 
+  source_language == "horvaatia" ~ "horvaadi",
+  source_language == "jidiši" ~ "jidiš",
+  source_language == "rooitsi" ~ "rootsi",
+  source_language == "turkmeeni" ~ "türkmeeni", 
+  source_language == "dargiini" ~ "dargi",
+  source_language %in% c("vana-usbeki", "vanausbeki") ~ "tšagatai",
+  str_detect(source_language, "vana") &
+    !str_detect(source_language, "vana-") ~ str_replace(source_language, "vana", "vana-"),
+  T ~ tolower(source_language)
+)) 
+```
+
+```{r}
+data_eng <- data_eng |> mutate(source_literature = case_when(
+  source_literature %in% c(" ", "", "teadmata", "tedamata",
+                           "teadmata/undetermined") ~ NA,
+  source_literature %in% c("prantuse", "prantsuse?")~ "prantsuse", 
+  source_literature == "sakas" ~ "saksa", 
+  source_literature == "horvaatia" ~ "horvaadi",
+  source_literature == "jidiši" ~ "jidiš",
+  source_literature == "rooitsi" ~ "rootsi",
+  source_literature == "turkmeeni" ~ "türkmeeni", 
+  source_literature == "dargiini" ~ "dargi",
+  source_literature %in% c("vana-usbeki", "vanausbeki") ~ "tšagatai",
+  source_literature == "moldaavia" ~ "moldova", 
+  source_literature == "moldaavi" ~ " moldova", 
+  source_literature %in% c("argeniina","argentiina")~ "argetina", 
+  source_literature == "inglised" ~ "inglise", 
+  source_literature == "kabardiini" ~ "kabardi", 
+  source_literature == "aserbaidžaan" ~ "aserbaidžaani", 
+  source_literature =="kolumbia" ~ "colombia", 
+  source_literature =="uksraina" ~ "ukraina", 
+  source_literature =="uruguai" ~ "uruguay", 
+  source_literature =="välis-eesti" ~ "väliseesti", 
+  source_literature =="vene'" ~ "vene", 
+  source_literature =="venetsueela" ~ "venezuela", 
+  str_detect(source_literature, "vana") & 
+    !str_detect(source_literature, "vana-") ~ str_replace(source_literature, "vana", "vana-"), 
+  T ~ tolower(source_literature)
+)) 
+```
+
+## title
+
+```{r}
+data_eng$title <- data_eng$title |>  str_replace(fixed("#D"), "")
+data_eng$title <- data_eng$title|> str_replace(fixed("*"), "")
+data_eng <- data_eng|> mutate(title = case_when(
+    title == "" ~ NA,
+    T ~ title
+  ))
+```
+
+##  author
+
+```{r}
+data_eng <- data_eng|> mutate(
+  author = case_when(
+    author == "" | author == "π" | author == "teadmata" ~ NA,
+    T ~ author
+  ))
+```
+
+## title_original
+
+```{r}
+data_eng <- data_eng|> mutate(title_original = case_when(
+    title_original == "ˇteadmata" | title_original == "teadmata" ~ NA,
+    T ~ title_original
+  ))
+```
+
+## translator
+
+```{r}
+data_eng$translator <- data_eng$translator|> str_replace("<<mf>>", "") 
+data_eng$translator <- data_eng$translator|> str_replace(fixed("|d"), " ")
+data_eng <- data_eng |> mutate(translator = case_when(
+    translator == "teadmata" | translator == "" ~ NA,
+    T ~ translator
+  ))
+```
+
+
+## editor
+
+```{r}
+data_eng <- data_eng|> mutate(
+  editor = case_when(
+    editor == "" | editor == "teadmata" ~ NA,
+    T ~ editor
+  ))
+```
+
+## fore_afterword_author
+
+```{r}
+data_eng$fore_afterword_author <- data_eng$fore_afterword_author |> str_replace(fixed("ˇˇ"), "")
+data_eng <- data_eng|> mutate(fore_afterword_author = case_when(
+    fore_afterword_author == "" | fore_afterword_author == "teadmata" ~ NA,
+    T ~ fore_afterword_author
+  ))
+```
+
+## publication_location
+
+```{r}
+data_eng <- data_eng |> mutate(publication_location = case_when(
+    publication_location == "" | publication_location == "teadmata" ~ NA,
+    T ~ publication_location
+  ))
+```
+
+## publisher
+
+```{r}
+data_eng <- data_eng |> mutate(publisher = case_when(
+    publisher == "" | publisher == "teadmata" ~ NA,
+    T ~ publisher
+  ))
+```
+
+## physical_description
+
+```{r}
+data_eng$physical_description <- data_eng$physical_description |> str_replace(fixed("ˇ"), "")
+data_eng <- data_eng |> mutate(physical_description = case_when(
+    physical_description == "" ~ NA,
+    T ~ physical_description
+  ))
+```
+
+## edition
+
+```{r}
+data_eng$edition <- data_eng$edition |> str_replace(fixed("ˇˇ"), "")
+data_eng <- data_eng |> mutate(edition = case_when(
+    edition == "ˇˇ" | edition == "" ~ NA,
+    T ~ edition
+  ))
+```
+
+## series
+
+```{r}
+data_eng <- data_eng |> mutate(series = case_when(
+    series == "ˇˇ" | series == "" ~ NA,
+    T ~ series
+  ))
+```
+
+## author_of_translated_book_under_review_to_be_removed
+
+```{r}
+data_eng$author_of_translated_book_under_review_to_be_removed <- 
+  data_eng$author_of_translated_book_under_review_to_be_removed |> 
+  str_replace("<p>", "") 
+data_eng$author_of_translated_book_under_review_to_be_removed <-
+  data_eng$author_of_translated_book_under_review_to_be_removed |> 
+  str_replace("</p>", "")  
+data_eng$author_of_translated_book_under_review_to_be_removed <-
+  data_eng$author_of_translated_book_under_review_to_be_removed |> 
+  str_replace(fixed("ˇˇ"), "")
+data_eng$author_of_translated_book_under_review_to_be_removed <-
+  data_eng$author_of_translated_book_under_review_to_be_removed |> 
+  str_replace(fixed('<span style="font-weight: 400">'), "")
+data_eng$author_of_translated_book_under_review_to_be_removed <-
+  data_eng$author_of_translated_book_under_review_to_be_removed |> 
+  str_replace(fixed('</span>'), "")
+
+data_eng <- data_eng |> 
+  mutate(author_of_translated_book_under_review_to_be_removed = case_when(
+    author_of_translated_book_under_review_to_be_removed == "" | 
+      author_of_translated_book_under_review_to_be_removed == "teadmata" ~ NA,
+    T ~ issue
+  ))
+```
+
+## issue
+
+```{r}
+data_eng$issue <- data_eng$issue |> str_replace("<p>", "") 
+data_eng$issue <- data_eng$issue |> str_replace("</p>", "") 
+data_eng$issue <- data_eng$issue |> str_replace('<span style="font-weight: 400">', '') 
+data_eng$issue <- data_eng$issue |> str_replace('</span>', '')
+data_eng <- data_eng |> mutate(
+  issue = case_when(
+    issue == "teadmata" |
+    issue == "" ~ NA,
+    T ~ issue
+  ))
+```
+
+
+## n_pages
+
+```{r}
+data_eng$n_pages <- data_eng$n_pages |> str_replace(fixed("ˇ"), "")
+data_eng <- data_eng |> mutate(
+  n_pages = case_when(
+    n_pages == "" ~ NA,
+    T ~ n_pages
+  ))
+```
+
+## content
+
+```{r}
+data_eng$content <- data_eng$content |> str_replace("<p>", "")
+data_eng$content <- data_eng$content |> str_replace("</p>", "")
+data_eng$content <- data_eng$content |> str_replace("&nbsp;", "") 
+data_eng$content <- data_eng$content |> str_replace("<br />", " ")
+data_eng <- data_eng |> mutate(
+  content = case_when(
+    content == "" ~ NA,
+    T ~ content
+  ))
+```
+
+## notes 
+
+```{r}
+data_eng$notes <- data_eng$notes |> str_replace(fixed("ˇ"), "") 
+data_eng$notes <- data_eng$notes |> str_replace("<<mf>>", "")
+data_eng$notes <- data_eng$notes |> str_replace(fixed("ˇ"), "") 
+data_eng$notes <- data_eng$notes |> str_replace("<<mf>>", "")
+data_eng <- data_eng |> mutate(
+  notes = case_when(
+    notes == "" ~ NA,
+    T ~ notes
+  ))
+```
+
+
 # duplicates removal 
+
 ```{r}
 data_eng <- data_eng[!duplicated(data_eng),] 
 ```
@@ -144,13 +396,6 @@ data_eng <- data_eng[!duplicated(data_eng),]
 ```{r}
 write.csv(data_eng, 'data/processed_translation_data_1.csv')
 ```
-
-
-
-
-
-
-
 
 
 ## removing the multiples 
