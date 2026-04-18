@@ -22,7 +22,7 @@ async def query_traditional(
     publication_year:str, source_language:str, source_literature:str,
     publication_location:str, publisher:str, series:str, genre:str,
     edition:str, fore_afterword_author:str, publication_type:str,
-    target_audience:str
+    target_audience:str, entry_lang: str,
     ) -> list[dict[str, list]]:
 
         crud_input = {}
@@ -46,6 +46,7 @@ async def create_datapoint_traditional(
     fore_afterword_author_birth_year:str, fore_afterword_author_death_year:str,
     edition:str, publication_type:str, target_audience:str, # enums should have a dropdown menu (just publication type is enough)
     issue: str, notes:str, n_pages:str, content:str, physical_description:str,
+    entry_lang: str,
     ) -> dict[str, list]:
 
     result = await create_resource(title, author_first_name, author_last_name, author_birth_year, author_death_year,
@@ -54,7 +55,7 @@ async def create_datapoint_traditional(
                     publication_year, source_language, source_literature, publication_location, publisher, series,
                     genre, fore_afterword_author_first_name, fore_afterword_author_last_name,
                     fore_afterword_author_birth_year, fore_afterword_author_death_year, edition, publication_type,
-                    target_audience, issue, notes, n_pages, content, physical_description
+                    target_audience, issue, notes, n_pages, content, physical_description, entry_lang
     )
 
     return result
