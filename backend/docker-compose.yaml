@@ -24,3 +24,9 @@ services:
       - ${PWD}/run.sh:/app/run.sh:z
     env_file:
       - .env
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
