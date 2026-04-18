@@ -7,12 +7,16 @@ output: html_document
 
 In this file functional pipeline: raw, but split data into processed data 
 
+Variable-wise steps: 
 1. split the data points with multiple values in one categories into multiple rows (done in a python script prior)
 2. standardise  
-3. divide dataset into: one category X multiple categories in one var 
-  - using the existing id I can then match the duplicates 
+
+Next steps: 
+
 4. Manual fixes
 5. Regex separation of years from authors and other persons is done in another python file 
+
+
 
 ```{r setup}
 library(dplyr)
@@ -215,7 +219,7 @@ rm(A,B,C,D,E)
 data_eng <- data_eng |> mutate(source_language = case_when(
   source_language %in% c(" ", "", "teadmata", "tedamata", 
                          "teadmata/undetermined") ~ NA,
-  source_language %in% c("prantuse", "prantsuse?")~ "prantsuse", 
+  source_language %in% c("prantuse", "prantsuse?", "prantsusre")~ "prantsuse", 
   source_language == "sakas" ~ "saksa", 
   source_language == "horvaatia" ~ "horvaadi",
   source_language == "jidiši" ~ "jidiš",
@@ -355,6 +359,57 @@ data_eng <- data_eng |> mutate(publication_location = case_when(
 ```{r}
 data_eng <- data_eng |> mutate(publisher = case_when(
     publisher == "" | publisher == "teadmata" ~ NA,
+    publisher == "A. Tõllasepp" ~ "A. Tõllasepp", 
+    publisher == "Ajalehtede ja Ajakirjade Kirjastus" ~ "Ajalehtede-Ajakirjade Kirjastus",
+    publisher == "Allika" ~ "Allika Kirjastus", 
+    publisher == "AVIV" ~ "Aviv", 
+    publisher == "Draakon ja Kuu" ~ "Draakon & Kuu", 
+    publisher == "Draama Stuudio" ~ "Draamastuudio", 
+    publisher == "Draamateaater" ~ "Draamateater", 
+    publisher %in% c("E.B.K Selts","E.B. Kirjanduse Selts","EBK Selts") ~ "E.B.K. Selts",
+    publisher == "ECOTALENT" ~ "Ecotalent", 
+    publisher == "EELK Pühapäevakooliühendus" ~ "EELK Pühapäevakooli Ühendus",
+    publisher == "Eesti Ekspress" ~ "Eesti Ekspressi Kirjastus" ,
+    publisher %in% c("Eesti Draama Studio","Eesti Draama Stuudio") ~ 'Eesti Draamastuudio',
+    publisher %in% c("Eesti Kirjanduse Seltsi koolikirjanduse-toimkond", 
+                     "Eesti Kirjanduse Selts Koolikirjanduse toimkond", 
+                     "Eesti Kirjanduse Seltsi koolikirjanduse toimkond") ~ "Eesti Kirjanduse Seltsi Koolikirjanduse toimkond", 
+    publisher == "Eesti Kirjastuse Kooperatiiv," ~ "Eesti Kirjastuse Kooperatiiv", 
+    publisher == "Eesti Päevalehe Kirjastus" ~ "Eesti Päevaleht", 
+    publisher %in% c("Eesti Pimedate Ühingu Heli- ja Punktkirjakeskus",
+                     "Eesti Pimedate Ühingu Heli-ja Punktkirja Keskus") ~ "Eesti Pimedate Ühingu Heli- ja Punktkirja Keskus", 
+    publisher == "Eesti Raamat," ~ "Eesti Raamat", 
+    publisher %in% c("Eestimaa Kooliõpetajate Vastastiku Abiandmise Selts", 
+                     "Eestimaa Kooliõpetajate Vastastikkuse Abiandmise Selts") ~ "Eestimaa Kooliõpetajate Vastastikku Abiandmise Selts",
+    publisher == "Eestimaa Kooliõpetajate Vastastiku Abiandmise Seltsi raamatukauplus" ~ "Eestimaa Kooliõpetajate Vastastikku Abiandmise Seltsi raamatukauplus", 
+    publisher == "EKP KK Kirjastus" ~ "EKP Keskkomitee Kirjastus",
+    publisher == "Kommunistlise partei Eestimaa keskkomitee"  ~ "EKP Keskkomitee Kirjastus",
+    publisher == "EÜS Veljesto kirjastus" ~ "EÜS Veljesto Kirjastus",
+    publisher == "Hendrik Lindepuu" ~ "Hendrik Lindepuu Kirjastus",
+    publisher == 'Heliraamatute Kirjastusfond "Helikiri' ~ "Heliraamatute Kirjastusfond Helikiri", 
+    publisher == "Hendrik Lindepuu" ~ "Hendrik Lindepuu Kirjastus",
+    publisher == "Kristliku Rahvakirjanduse agentur" ~ "Kristliku rahvakirjanduse agentur",
+    publisher == "Odamees-Carl Sarap" ~ "Odamees", 
+    publisher == "Odamees/Carl Sarap" ~ "Odamees", 
+    publisher == "Pilgrim Group" ~ "Pilgrim",
+    publisher %in% c("Pimedate infoühing Helikiri", 
+                     'Pimedate Infoühing "Helikiri') ~ "Pimedate Infoühing Helikiri", 
+    publisher == "Saksala Kirjastusühisus" ~ "Sakala Kirjastusühisus", 
+    publisher %in% c("T. Mutsu teatrikirjastus", 
+                     "T. Mutsu Teatrikirjastus", 
+                     "T. Mutsu Teaterkirjastus") ~ "T. Mutsu Theater Kirjastus", 
+    publisher %in% c("Tallinna Eesti Kirjastuse-ühisus", 
+                     "Tallinna Eesti Kirjastuse-Ühisus") ~ "Tallinna Eesti Kirjastus-Ühisus", 
+    publisher %in% c("Tallinna Töölisteaater", 
+                     "Tallinna Töölisteatri ühing", 
+                     "Tallinna Töölisteatri Yhing") ~ "Tallinna Töölisteatri Ühing", 
+    publisher == "TormiKiri" ~ "Tormikiri",
+    publisher == "TRAVON"~ "Travon", 
+    publisher == "Uuem kirjandus" ~ "Uuem Kirjandus", 
+    publisher == "V. K. P. K.-K. Siberi Oblasti büroo Eesti sektsioon" ~ "V. K. P. KK Siberi Oblasti buroo Eesti sektsioon", 
+    publisher == "Välismaatööliste kirjastusühisus NSV Liidus" ~ "Välismaatööliste Kirjastusühisus NSV Liidus",
+    publisher == "Varak" ~ "Varrak", 
+    publisher == "Viroonia" ~ "Vironia", 
     T ~ publisher
   ))
 ```
@@ -478,16 +533,9 @@ data_eng <- data_eng[!duplicated(data_eng),]
 # write processed data
 
 ```{r}
-write.csv(data_eng, 'data/processed_translation_data_3.csv')
+write.csv(data_eng, 'data/processed_translation_data_4.csv')
 ```
 
-## removing the multiples 
-
-```{r}
-data_to_be_split <- data_eng |> filter(str_detect(publication_type, ", "))
-data_eng <- data_eng |> filter(!str_detect(publication_type, ", ") & 
-                                 !str_detect(target_audience, ', '))
-```
 
 # Manual changes to be done 
 
