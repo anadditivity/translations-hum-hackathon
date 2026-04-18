@@ -3,12 +3,15 @@ title: "standardizing-values"
 output: html_document
 ---
 
-TODO: 
-- [] go through this document and standardize
-
-```{r}
+```{r setup}
 data = read.csv("data/translation_data_possible_duplicates.csv")
+new_names = read.csv('data/translated_names.csv')
 data |> colnames()
+data_eng <- data
+colnames(data_eng) <- new_names$x
+data_eng |> colnames()
+
+# data_to_be_split # rows of vars with more values 
 ```
 
 # Standardizing the somewhat-fixed columns
@@ -41,10 +44,25 @@ Standardizing:
 with the first letter capitalized.
 
 ```{r}
-data |> select(teaviku_laad) |> unique()
+# data |> select(teaviku_laad) |> unique()
+# data_eng |> select(publication_type) |> unique()
+# 
+# data_eng$publication_type |> unique()
+# 
+# # data_eng |> mutate(publication_type = case_when(
+# #   (data_eng$publication_type == "" | data_eng$publication_type == "-") ~ NULL, 
+# #   T ~ publication_type))
 
-data_modified <- data |> 
-  mutate(teaviku_laad)
+data_eng <- data_eng |> mutate(publication_type = case_when(
+  publication_type %in% c("", " ", "-")  ~ NA, 
+  publication_type == "Tõlkeraamnat" ~ "Tõlkeraamat", 
+  publication_type == "tõlkeraamat" ~ "Tõlkeraamat",
+  T ~ publication_type )) 
+
+data_eng |> select(publication_type) |> unique()
+
+data_to_be_split <- data_eng |> filter(str_detect(publication_type, ", ")) 
+
 ```
 
 
@@ -69,12 +87,50 @@ Standardizing:
   - "Laste- ja noortekirjandus"
 with the first letter capitalized.
 
+```{r}
+data_eng |> select(target_audience) |> unique()
+data_eng <- data_eng |> mutate(target_audience = case_when(
+  target_audience %in% c(" ", "") ~ NA, 
+  target_audience == "laste- ja noortekirjandus" ~ "Laste- ja noortekirjandus", 
+  target_audience == "Täiskasvanute lukirjandus" ~ "Täiskasvanute ilukirjandus", 
+  target_audience == "Laste ja noortekirjandus" ~ "Laste- ja noortekirjandus", 
+  T ~ target_audience
+))
+
+data_to_be_split <- data_eng |> filter(str_detect(target_audience, ", "))
+```
+
 
 ## Column "Žanr" ()
 Standardizing:
 - split values from "; "
 - empty values "" standardize to NULL
 - put genres in all lowercase (after filtering out `Muzl, der gestiefelte Kater`)
+- all values are in plural 
+
+```{r}
+data_eng |> select(genre) |> unique() |> View()
+
+data_eng |> mutate(genre = case_when(
+  genre %in% c(" ", "", 'j') ~ NA, 
+  genre == "romaanidq" ~ "romaanid",
+  genre == "Muzl, der gestiefelte Kater" ~ NA, 
+  genre == "romaan" ~ "romaanid", 
+  genre == "rtomaanid" ~ "rommanid",
+  genre == "dramatiseering" ~ "dramatiseeringud", 
+  genre == "jutt" ~ "jutud", 
+  genre == "jutus" ~ "jutud", 
+  genre == "jutustus" ~ "jutustused", 
+  genre == "jutustuse" ~ "jutustused", 
+  genre == "jutustusedd" ~ "jutustused", 
+  genre == "näidenid" ~ "näidendid", 
+  T ~ tolower(genre)
+)) |> group_by(genre) |> count()
+
+
+```
+
+
 
 
 ## Columns "lähtekeel" and "lähtekirjandus" ()
