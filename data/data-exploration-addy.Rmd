@@ -4,12 +4,24 @@ output: html_document
 ---
 
 ```{r}
+library(stringr)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(tidyr)
+
+```
+
+
+
+```{r}
 data = read.csv("translation_data_possible_duplicates.csv")
 ```
 
 ```{r}
 data[duplicated(data),]
 ```
+
 ```{r}
 colnames(data)
 ```
@@ -18,7 +30,7 @@ colnames(data)
 unique(data$teaviku_laad)
 unique(data$sihtrühm)
 unique(data$Žanr)
-#unique(data$lähtekeel)
+unique(data$lähtekeel)
 #unique(data$lähtekirjandus)
 #unique(data$toimetaja)
 #unique(data$ilmumiskoht)
@@ -44,22 +56,34 @@ unique(data$lähtekeel)
 
 
 ```{r}
-data %>% filter(lähtekirjandus == "")
+data %>% filter(strlähtekeel == "vene, saksa, prantsuse") %>% View()
+data %>% filter(strlähtekeel == "vene, saksa, prantsuse") %>% View()
 ```
 ```{r}
-data %>% filter(pealkiri == "")
+data %>% filter(str_detect(pealkiri, ";")) %>% View()
 
 ```
 
 
 ```{r}
-unique(data$teaviku_laad)
+max(nchar(data$autor))
+
+data %>% filter(nchar(autor) == 254)
 ```
 
 
+book being part of one series at a time
+book having one target audience
+review one book at a time
+one source lang, literature
+not one pub loc
 
 
 
+```{r}
+data %>% filter(str_detect(pealkiri, ";")) %>% filter(str_detect(lähtekeel, ";")) %>% View()
+
+```
 
 
 

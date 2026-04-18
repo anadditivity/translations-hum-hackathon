@@ -71,6 +71,19 @@ Standardizing:
 
 
 
+## Columns "pealkiri" and "originaal:pealkiri" ()
+Standardizing:
+- split values from "; "
+- empty values "" standardize to NULL
+
+
+
+
+
+
+
+
+
 
 
 

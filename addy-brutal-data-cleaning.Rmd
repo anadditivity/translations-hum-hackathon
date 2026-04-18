@@ -1,0 +1,21 @@
+---
+title: "addy-brutal-data-cleaning"
+output: html_document
+---
+
+```{r}
+library(stringr)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(tidyr)
+
+```
+
+Teaviku laad
+
+
+```{r}
+
+```
+
