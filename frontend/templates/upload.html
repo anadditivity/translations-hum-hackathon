@@ -8,9 +8,8 @@
         <link rel="stylesheet" href="static/style.css">
     </head>
     <body>
-        <!-- <script src="static/index.js"></script>   -->
         <h1>Translation database</h1>
-        <form id="query-form" action="http://localhost:8000/upload_translation", method="POST">
+        <form id="upload-form">
             <label>Title</label> <input type="text" id="title" name="title"><br>
             <label>Author first name</label> <input type="text" id="author_first_name" name="author_first_name"><br>
             <label>Author last name</label> <input type="text" id="author_last_name" name="author_last_name"><br>
@@ -43,9 +42,10 @@
             <label>Content</label> <input type="text" id="content" name="content"><br>
             <label>Physiical description</label> <textarea type="text" id="physical_description" name="physical_description"></textarea><br>
             <label>Entry lang</label> <input type="text" id="entry_lang" name="entry_lang" value="eng"><br>
-            <input type="submit" value="Save">
         </form>
+        <button onclick="sendForm()">Submit</button>
         <div id="response-data">
         </div>
+        <script src="static/upload.js"></script>  
     </body>
 </html>
