@@ -22,8 +22,8 @@ Next steps:
 library(dplyr)
 library(stringr)
 
-data <- read.csv("data/exploded_data.csv")
-new_names <- read.csv('data/translated_names.csv')
+data <- read.csv("exploded_data.csv")
+new_names <- read.csv('translated_names.csv')
 
 data_eng <- data
 colnames(data_eng) <- new_names$x
@@ -674,7 +674,7 @@ op_count2 <- op_count2 + count_diff_df(before2, data_eng)
 # write processed data
 
 ```{r}
-write.csv(data_eng, 'data/processed_translation_data_4.csv')
+write.csv(data_eng, 'processed_translation_data_4.csv')
 ```
 
 
