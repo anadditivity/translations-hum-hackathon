@@ -1,3 +1,50 @@
+CREATE TABLE PUBLISHERS(
+	id SERIAL PRIMARY KEY,
+	name varchar(255)
+);
+
+CREATE TABLE SERIES (
+	id SERIAL PRIMARY KEY,
+	name varchar(255)
+);
+
+CREATE TABLE TARGET_AUDIENCES (
+	id SERIAL PRIMARY KEY,
+	est varchar(255),
+	eng varchar(255)
+);
+
+CREATE TABLE LANGUAGES (
+	id SERIAL PRIMARY KEY,
+	est varchar(255),
+	eng varchar (255)
+);
+
+
+CREATE TABLE GENRES (
+	id SERIAL PRIMARY KEY,
+	est varchar(255),
+	eng varchar(255)
+);
+
+CREATE TABLE LITERATURES (
+	id SERIAL PRIMARY KEY,
+	est varchar(255),
+	eng varchar(255)
+);
+
+CREATE TABLE LOCATIONS (
+	id SERIAL PRIMARY KEY,
+	name varchar(255)
+);
+
+
+CREATE TABLE PUBLICATION_TYPES (
+	id SERIAL PRIMARY KEY,
+	est varchar(255),
+	eng varchar(255)
+);
+
 CREATE TABLE TRANSLATIONS (
 	id SERIAL PRIMARY KEY,
 	title varchar(255) NOT NULL,
@@ -48,50 +95,6 @@ CREATE TABLE NAMES (
     REFERENCES LANGUAGES(id)
 );
 
-CREATE TABLE LANGUAGES (
-	id SERIAL PRIMARY KEY,
-	est varchar(255),
-	eng varchar (255)
-);
-
-CREATE TABLE SERIES (
-	id SERIAL PRIMARY KEY,
-	name varchar(255)
-);
-
-CREATE TABLE TARGET_AUDIENCES (
-	id SERIAL PRIMARY KEY,
-	est varchar(255),
-	eng varchar(255)
-);
-
-CREATE TABLE GENRES (
-	id SERIAL PRIMARY KEY,
-	est varchar(255),
-	eng varchar(255)
-);
-
-CREATE TABLE LITERATURES (
-	id SERIAL PRIMARY KEY,
-	est varchar(255),
-	eng varchar(255)
-);
-
-CREATE TABLE PUBLISHERS (
-	id SERIAL PRIMARY KEY,
-	name varchar(255)
-);
-
-CREATE TABLE LOCATIONS (
-	id SERIAL PRIMARY KEY,
-	name varchar(255)
-);
-
-CREATE TABLE PUBLICATION_TYPES (
-	id SERIAL PRIMARY KEY,
-	est varchar(255),
-	eng varchar(255)
-);
 
 -- Intermediary tables
 

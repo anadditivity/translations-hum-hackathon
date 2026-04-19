@@ -1,31 +1,25 @@
+from main import TranslationItem
 from db import engine
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, text
 from sqlalchemy.engine import Connection
 
 # generic function for getting information the same way the original db did
 async def get_resource(json: dict) -> list[dict]:
-    con = engine.connect(close_with_result=True)
+    with engine.connect() as con:
     
-    for key, value in json.items():
-        ...
+        # for key, value in json.items():
+        #     ...
 
-    result = con.execute('SELECT * FROM TRANSLATIONS;').fetchall()
+        result = con.execute(text('SELECT * FROM TRANSLATIONS;')).fetchall()
 
-    result_dict = [dict(row) for row in result]
-
+        result_dict = [dict(row) for row in result]
+    result.append({
+        "title": "dummy title",
+        "author": "dummy author",
+    })
     return result
 
-async def create_resource(title: str, author_first_name: str, author_last_name: str,
-    author_birth_year: int,  author_death_year: str, title_original:str,
-    translator_first_name:str, translator_last_name:str, translator_birth_year:str, translator_death_year:str,
-    editor_first_name:str, editor_last_name:str, editor_birth_year:str, editor_death_year:str,
-    publication_year:str, source_language:str, source_literature:str,
-    publication_location:str, publisher:str, series:str, genre:str,
-    fore_afterword_author_first_name:str, fore_afterword_author_last_name:str,
-    fore_afterword_author_birth_year:str, fore_afterword_author_death_year:str,
-    edition:str, publication_type:str, target_audience:str, # enums should have a dropdown menu (just publication type is enough)
-    issue: str, notes:str, n_pages:str, content:str, physical_description:str,
-    entry_lang: str,) -> str:
+async def create_resource(item: TranslationItem) -> str:
     con = engine.connect()
 
     result = await create_resource(title, author_first_name, author_last_name, author_birth_year, author_death_year,
