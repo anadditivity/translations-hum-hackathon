@@ -15,6 +15,15 @@ library(psych)
 
 Now then, let's get started
 
+```{r}
+# created with the help of ChatGPT
+op_count <- 0
+
+count_diff <- function(before, after) {
+  sum((before != after) | (is.na(before) != is.na(after)), na.rm = TRUE)
+}
+```
+
 
 ```{r}
 data = read.csv("data/translation_data_possible_duplicates.csv")
@@ -85,16 +94,21 @@ data_eng %>% filter(publication_type == "Tõlkearvustus") %>% filter(fore_afterw
 ```{r}
 
 # title
+before <- data_eng$title
 data_eng$title = data_eng$title %>% str_replace(fixed("#D"), "")
 data_eng$title = data_eng$title %>% str_replace(fixed("*"), "")
+op_count <- op_count + count_diff(before, data_eng$title)
+before <- data_eng$title
 data_eng = data_eng %>% mutate(
   title = case_when(
     title == "" ~ NA,
     T ~ title
   )
   )
+op_count <- op_count + count_diff(before, data_eng$title)
 
 # author
+before <- data_eng$author
 data_eng = data_eng %>% mutate(
   author = case_when(
     author == "" |
@@ -103,7 +117,11 @@ data_eng = data_eng %>% mutate(
     T ~ author
   )
   )
+op_count <- op_count + count_diff(before, data_eng$author)
 
+```
+
+```{r}
 # title_original
 data_eng = data_eng %>% mutate(
   title_original = case_when(
