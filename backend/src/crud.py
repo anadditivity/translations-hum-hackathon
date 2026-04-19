@@ -1,7 +1,7 @@
-from main import TranslationItem
 from db import engine
 from sqlalchemy import select, insert, text
 from sqlalchemy.engine import Connection
+from trans_item import TranslationItem
 
 # generic function for getting information the same way the original db did
 async def get_resource(json: dict) -> list[dict]:
@@ -20,20 +20,55 @@ async def get_resource(json: dict) -> list[dict]:
     return result
 
 async def create_resource(item: TranslationItem) -> str:
-    con = engine.connect()
+    conn = engine.connect()
 
-    result = await create_resource(title, author_first_name, author_last_name, author_birth_year, author_death_year,
-                    title_original, translator_first_name, translator_last_name, translator_birth_year,
-                    translator_death_year, editor_first_name, editor_last_name, editor_birth_year, editor_death_year,
-                    publication_year, source_language, source_literature, publication_location, publisher, series,
-                    genre, fore_afterword_author_first_name, fore_afterword_author_last_name,
-                    fore_afterword_author_birth_year, fore_afterword_author_death_year, edition, publication_type,
-                    target_audience, issue, notes, n_pages, content, physical_description, entry_lang)
+    title = item.title 
+    author_first_name = item.author_first_name 
+    # author_last_name = item.author_last_name 
+    author_birth_year = item.author_birth_year 
+    # author_death_year = item.author_death_year 
+    title_original = item.title_original 
+    translator_first_name = item.translator_first_name 
+    # translator_last_name = item.translator_last_name 
+    translator_birth_year = item.translator_birth_year 
+    # translator_death_year = item.translator_death_year 
+    editor_first_name = item.editor_first_name 
+    # editor_last_name = item.editor_last_name 
+    editor_birth_year = item.editor_birth_year 
+    # editor_death_year = item.editor_death_year 
+    publication_year = item.publication_year 
+    # source_language = item.source_language 
+    # source_literature = item.source_literature 
+    publication_location = item.publication_location 
+    # publisher = item.publisher 
+    # series = item.series 
+    # genre = item.genre 
+    fore_afterword_author_first_name = item.fore_afterword_author_first_name 
+    # fore_afterword_author_last_name = item.fore_afterword_author_last_name 
+    fore_afterword_author_birth_year = item.fore_afterword_author_birth_year 
+    # fore_afterword_author_death_year = item.fore_afterword_author_death_year 
+    edition = item.edition 
+    # publication_type = item.publication_type 
+    # target_audience = item.target_audience 
+    issue = item.issue 
+    # notes = item.notes 
+    # n_pages = item.n_pages 
+    # content = item.content 
+    # physical_description = item.physical_description 
+    entry_lang = item.entry_lang 
+
+    result = await insert_translation(
+        conn, title, author_first_name, author_birth_year, title_original,
+        translator_first_name, translator_birth_year, editor_first_name,
+        editor_birth_year, publication_year, publication_location,
+        fore_afterword_author_first_name, fore_afterword_author_birth_year,
+        edition, issue, entry_lang,
+    )
 
     return result
 
 ### AI GENERATED CODE, bugs may be present
-def get_or_create(conn: Connection, table, where_cols: dict, insert_cols: dict):
+def get_or_create(conn: Connection, table: str, where_cols: dict, insert_cols: dict):
     row = conn.execute(
         select(table).filter_by(**where_cols)
     ).mappings().first()
