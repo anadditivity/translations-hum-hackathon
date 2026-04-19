@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Trans db</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="static/style.css">
     </head>
     <body>
         <script src="static/index.js"></script>  
@@ -15,7 +15,7 @@
             <label>Author</label> <input type="text" id="author" name="author"><br>
             <label>Title of the original</label> <input type="text" id="title_original" name="title_original"><br>
             <label>Translator</label> <input type="text" id="translator" name="translator"><br>
-            <label>Publication year</label> <label>to</label> <input type="text" id="publication_year" name="publication_year"><br>
+            <label>Publication year</label> <span class="year-range"><input type="text" id="publication_year_from" name="publication_year_from" placeholder="from"><span class="year-sep">–</span><input type="text" id="publication_year_to" name="publication_year_to" placeholder="to"></span><br>
             <label>Source language</label> <input type="text" id="source_language" name="source_language"><br>
             <label>Source literature</label> <input type="text" id="source_literature" name="source_literature"><br>
             <label>Location of publication</label> <input type="text" id="publication_location" name="publication_location"><br>
@@ -26,6 +26,7 @@
             <label>Author of the reviewed translation book</label> <input type="text" id="fore_afterword_author" name="fore_afterword_author"><br>
             <label>Publication type</label> <input type="text" id="publication_type" name="publication_type"><br>
             <label>Target audience</label> <input type="text" id="target_audience" name="target_audience"><br>
+            <label>Entry lang</label> <input type="text" id="entry_lang" name="entry_lang" value="eng"><br>
         </form>
         <button onclick="sendForm()">Submit</button>
         <div id="response-data">

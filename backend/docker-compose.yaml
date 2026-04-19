@@ -11,8 +11,8 @@ services:
       - POSTGRES_DB=translation_db
     volumes:
       - ${PWD}/db-data/:/var/lib/postgresql/data/:z
-      - ${PWD}/db/create_db.sql:/docker-entrypoint-initdb.d/init.sql:z
-
+      - ${PWD}/db/create_db.sql:/docker-entrypoint-initdb.d/create_tables.sql:z
+      - ${PWD}/db/traditional_view.sql:/docker-entrypoint-initdb.d/create_views.sql:z
 
   backend:
     image: translation/api
@@ -22,6 +22,7 @@ services:
       - 8000:8000
     volumes:
       - ${PWD}/run.sh:/app/run.sh:z
+      - ${PWD}/src:/app/src:z
     env_file:
       - .env
 

@@ -1,3 +1,420 @@
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+/* ── Variables ─────────────────────────────────────────── */
 :root {
-    background: #dddddd;
+    --bg:           #f5f2ec;
+    --surface:      #ffffff;
+    --border:       #d4cfc6;
+    --border-focus: #7a6a55;
+    --text:         #1e1b17;
+    --text-muted:   #6b6459;
+    --accent:       #3d5a4c;
+    --accent-hover: #2e4439;
+    --label-w:      220px;
+    --radius:       3px;
+    --shadow:       0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.04);
+}
+
+/* ── Reset & Base ───────────────────────────────────────── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 0 0 4rem;
+}
+
+/* ── Page header ────────────────────────────────────────── */
+body > h1 {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem 2.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+body > h1::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 1.4em;
+    background: var(--accent);
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+/* ── Main card ──────────────────────────────────────────── */
+form,
+#response-data,
+body > button {
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+form#query-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 2rem 2.5rem;
+    display: grid;
+    gap: 0;
+}
+
+/* ── Field rows ─────────────────────────────────────────── */
+form#query-form br {
+    display: none; /* we'll use CSS grid instead */
+}
+
+/* Each label+input pair sits in a flex row */
+form#query-form label {
+    display: inline-flex;
+    align-items: center;
+    min-width: var(--label-w);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    font-size: 0.78rem;
+    padding: 0.65rem 0;
+    flex-shrink: 0;
+}
+
+/* Wrap each label+input into a logical row */
+form#query-form > label {
+    border-top: 1px solid var(--border);
+    padding-top: 0.65rem;
+}
+
+form#query-form > label:first-child {
+    border-top: none;
+}
+
+/* Pair each label visually with its input */
+form#query-form {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Re-layout as rows using adjacent sibling CSS */
+form#query-form input[type="text"] {
+    width: 100%;
+    max-width: 500px;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 400;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    outline: none;
+    margin-bottom: 0.1rem;
+}
+
+form#query-form input[type="text"]:focus {
+    border-color: var(--border-focus);
+    background: #fff;
+    box-shadow: 0 0 0 3px rgba(61,90,76,0.1);
+}
+
+form#query-form input[type="text"]:hover:not(:focus) {
+    border-color: #b8b2a8;
+}
+
+/* Row container: each label + its input in a horizontal row */
+/* We wrap with a CSS trick – since the HTML alternates label/input,
+   we use a flex column on the form but each label floats with its input */
+form#query-form {
+    display: grid;
+    grid-template-columns: var(--label-w) 1fr;
+    align-items: center;
+    row-gap: 0;
+}
+
+form#query-form label {
+    grid-column: 1;
+    border-top: 1px solid var(--border);
+    padding: 0.6rem 1rem 0.6rem 0;
+}
+
+form#query-form input[type="text"] {
+    grid-column: 2;
+    border-top: 1px solid var(--border);
+    margin: 0.6rem 0;
+    max-width: 420px;
+}
+
+/* Remove top border from the very first row */
+form#query-form label:first-child,
+form#query-form label:first-child + input {
+    border-top: none;
+}
+
+/* ── Submit button ──────────────────────────────────────── */
+body > button {
+    display: block;
+    margin-top: 1.25rem;
+    padding: 0.6rem 2rem;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    border: none;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+    box-shadow: 0 1px 4px rgba(61,90,76,0.25);
+}
+
+body > button:hover {
+    background: var(--accent-hover);
+    box-shadow: 0 2px 8px rgba(61,90,76,0.3);
+}
+
+body > button:active {
+    transform: translateY(1px);
+    box-shadow: none;
+}
+
+/* ── Results ────────────────────────────────────────────── */
+#response-data {
+    margin-top: 2rem;
+}
+
+#response-data:empty {
+    display: none;
+}
+
+#response-data p {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.8rem 1.25rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text);
+    transition: border-color 0.15s;
+}
+
+#response-data p:hover {
+    border-color: var(--border-focus);
+}
+
+/* ── Section dividers (visual grouping) ─────────────────── */
+/* Add a subtle section break before certain fields */
+form#query-form label[for="publication_year"],
+form#query-form label[for="source_language"] {
+    margin-top: 0.25rem;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 640px) {
+    :root {
+        --label-w: 100%;
+    }
+
+    body > h1 {
+        padding: 1.25rem 1.25rem;
+        font-size: 1.25rem;
+    }
+
+    form#query-form {
+        grid-template-columns: 1fr;
+        padding: 1.25rem;
+    }
+
+    form#query-form label {
+        grid-column: 1;
+        border-top: none;
+        padding-bottom: 0.15rem;
+        padding-top: 0.75rem;
+    }
+
+    form#query-form input[type="text"] {
+        grid-column: 1;
+        border-top: none;
+        margin-top: 0;
+        max-width: 100%;
+    }
+
+    /* Add a separator line per row on mobile */
+    form#query-form input[type="text"] {
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    body > button {
+        width: 100%;
+        text-align: center;
+        margin: 1rem 1.25rem 0;
+        width: calc(100% - 2.5rem);
+    }
+
+    form, #response-data, body > button {
+        margin-left: 1rem;
+        margin-right: 1rem;
+    }
+}
+
+/* ── Result count ───────────────────────────────────────── */
+.result-count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    padding-left: 0.1rem;
+}
+
+/* ── Result cards ───────────────────────────────────────── */
+.result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 0.75rem;
+    overflow: hidden;
+    transition: border-color 0.15s;
+}
+
+.result-card:hover {
+    border-color: var(--border-focus);
+}
+
+.card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem 1.25rem;
+    background: #faf9f6;
+    border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+    font-family: 'Libre Baskerville', Georgia, serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+}
+
+.card-year {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+    letter-spacing: 0.03em;
+}
+
+.card-body {
+    padding: 0.25rem 0;
+}
+
+.card-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 0.5rem;
+    align-items: baseline;
+    padding: 0.35rem 1.25rem;
+    border-top: 1px solid #eeebe4;
+    font-size: 0.9rem;
+}
+
+.card-row:first-child {
+    border-top: none;
+}
+
+.card-label {
+    font-size: 0.73rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    padding-top: 0.05rem;
+}
+
+.card-value {
+    color: var(--text);
+    line-height: 1.4;
+}
+
+/* ── Status messages ────────────────────────────────────── */
+.loading, .no-results, .error {
+    font-size: 0.9rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+}
+
+.loading    { color: var(--text-muted); }
+.no-results { color: var(--text-muted); font-style: italic; }
+.error      { color: #8b2e2e; border-color: #e0b4b4; background: #fff5f5; }
+
+/* ── Responsive cards ───────────────────────────────────── */
+@media (max-width: 640px) {
+    .card-row {
+        grid-template-columns: 1fr;
+        gap: 0.1rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .card-header {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+}
+
+/* ── Year range row ─────────────────────────────────────── */
+.year-range {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    grid-column: 2;
+    margin: 0.6rem 0;
+}
+
+.year-range input[type="text"] {
+    width: 90px;
+    max-width: 90px;
+    margin: 0;
+    border-top: none !important; /* row border comes from label only */
+    grid-column: unset;
+}
+
+.year-sep {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    user-select: none;
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Trans db</title>
+        <link rel="stylesheet" href="static/style.css">
+    </head>
+    <body>
+        <!-- <script src="static/index.js"></script>   -->
+        <h1>Translation database</h1>
+        <form id="query-form" action="http://localhost:8000/upload_translation", method="POST">
+            <label>Title</label> <input type="text" id="title" name="title"><br>
+            <label>Author first name</label> <input type="text" id="author_first_name" name="author_first_name"><br>
+            <label>Author last name</label> <input type="text" id="author_last_name" name="author_last_name"><br>
+            <label>Author birth year</label> <input type="text" id="author_birth_year" name="author_birth_year"><br>
+            <label>Author death year</label> <input type="text" id="author_death_year" name="author_death_year"><br>
+            <label>Title of the original</label> <input type="text" id="title_original" name="title_original"><br>
+            <label>Translator first name</label> <input type="text" id="translator_first_name" name="translator_first_name"><br>
+            <label>Translator last name</label> <input type="text" id="translator_last_name" name="translator_last_name"><br>
+            <label>Editor first name</label> <input type="text" id="editor_first_name" name="editor_first_name"><br>
+            <label>Editor last name</label> <input type="text" id="editor_last_name" name="editor_last_name"><br>
+            <label>Editor birth year</label> <input type="text" id="editor_birth_year" name="editor_birth_year"><br>
+            <label>Editor death year</label> <input type="text" id="editor_death_year" name="editor_death_year"><br>
+            <label>Publication year</label> <input type="text" id="publication_year" name="publication_year"><br>
+            <label>Source language</label> <input type="text" id="source_language" name="source_language"><br>
+            <label>Source literature</label> <input type="text" id="source_literature" name="source_literature"><br>
+            <label>Location of publication</label> <input type="text" id="publication_location" name="publication_location"><br>
+            <label>Publisher</label> <input type="text" id="publisher" name="publisher"><br>
+            <label>Serial data</label> <input type="text" id="series" name="series"><br>
+            <label>Genre</label> <input type="text" id="genre" name="genre"><br>
+            <label>Fore/afterword author first name</label> <input type="text" id="fore_afterword_author_first_name" name="fore_afterword_author_first_name"><br>
+            <label>Fore/afterword author last name</label> <input type="text" id="fore_afterword_author_last_name" name="fore_afterword_author_last_name"><br>
+            <label>Fore/afterword author birth year</label> <input type="text" id="fore_afterword_author_birth_year" name="fore_afterword_author_birth_year"><br>
+            <label>Fore/afterword author death year</label> <input type="text" id="fore_afterword_author_death_year" name="fore_afterword_author_death_year"><br>
+            <label>Edition</label> <input type="text" id="edition" name="edition"><br>
+            <label>Publication type</label> <input type="text" id="publication_type" name="publication_type"><br>
+            <label>Target audience</label> <input type="text" id="target_audience" name="target_audience"><br>
+            <label>Issue</label> <input type="text" id="issue" name="issue"><br>
+            <label>Notes</label> <textarea type="text" id="notes" name="notes"></textarea><br>
+            <label>Number of pages</label> <input type="text" id="n_pages" name="n_pages"><br>
+            <label>Content</label> <input type="text" id="content" name="content"><br>
+            <label>Physiical description</label> <textarea type="text" id="physical_description" name="physical_description"></textarea><br>
+            <label>Entry lang</label> <input type="text" id="entry_lang" name="entry_lang" value="eng"><br>
+            <input type="submit" value="Save">
+        </form>
+        <div id="response-data">
+        </div>
+    </body>
+</html>
