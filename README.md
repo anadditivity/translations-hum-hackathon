@@ -47,7 +47,11 @@ POSTGRES_PASSWORD=...
 On Linux CLI, this can be done with `docker compose up --build`; in Docker Desktop, you need to utilize the Docker Terminal in the bottom, do `cd backend/` and `docker compose up --build`. This will create a bunch of scary lines.
 
 This should start the following services:
-- PostgreSQL on `localhost:5432`.
-- the main database interfacing API on `localhost:8000`
-- Adminer for SQL on `localhost:8080`.
+- PostgreSQL on [localhost:5432](https://localhost:5432/).
+- the main database interfacing API on [localhost:8000](http://localhost:8000/)
+- Adminer for SQL on [localhost:8080](http://localhost:8080/).
 
+Then, to get the front-end (requires Python and `pip install flask`):
+- open a terminal in `frontend/`.
+- run `python main.py`.
+- Open [localhost:5000](http://localhost:5000/) in the browser.
