@@ -197,9 +197,9 @@ CREATE TABLE TRANSLATIONS_GENRES (
 
     CONSTRAINT fk_translation_id
     FOREIGN KEY (translation_id)
-    REFERENCES GENRES(id),
+    REFERENCES TRANSLATIONS(id),
 
-    CONSTRAINT fk_person_id
+    CONSTRAINT fk_genre_id
     FOREIGN KEY (genre_id)
     REFERENCES GENRES(id)
 );

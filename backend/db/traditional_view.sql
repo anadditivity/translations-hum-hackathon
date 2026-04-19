@@ -114,17 +114,17 @@ SELECT
     /* literatures */
     (
         SELECT string_agg(coalesce(lit.eng, lit.est), '; ' ORDER BY coalesce(lit.eng, lit.est))
-        FROM TRANSLATIONS_LITERATURES tl
-        JOIN LITERATURES lit ON lit.id = tl.literature_id
-        WHERE tl.translation_id = t.id
+        FROM TRANSLATIONS_LITERATURES tlit
+        JOIN LITERATURES lit ON lit.id = tlit.literature_id
+        WHERE tlit.translation_id = t.id
     ) AS source_literature,
 
     /* locations */
     (
         SELECT string_agg(loc.name, '; ' ORDER BY loc.name)
-        FROM TRANSLATIONS_LOCATIONS tl
-        JOIN LOCATIONS loc ON loc.id = tl.location_id
-        WHERE tl.translation_id = t.id
+        FROM TRANSLATIONS_LOCATIONS tloc
+        JOIN LOCATIONS loc ON loc.id = tloc.location_id
+        WHERE tloc.translation_id = t.id
     ) AS publication_location,
 
     /* genres */
@@ -146,4 +146,5 @@ SELECT
 FROM TRANSLATIONS t
 LEFT JOIN PUBLISHERS pub ON pub.id = t.publisher
 LEFT JOIN SERIES s ON s.id = t.series
-LEFT JOIN TARGET_AUDIENCES ta ON ta.id = t.target_audience;
+LEFT JOIN TARGET_AUDIENCES ta ON ta.id = t.target_audience
+WHERE EXISTS (SELECT 1 FROM TRANSLATIONS t2 WHERE t2.id = t.id);

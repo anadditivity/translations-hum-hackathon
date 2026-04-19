@@ -1,195 +1,210 @@
-import pandas as pd
-from db import engine
+import csv
+import re
 from sqlalchemy import text
+from db import engine
 
-# AI GENERATED CODE AHEAD
+
+
+# ---------- HELPERS ----------
 
 def get_or_create(conn, table, column, value):
-    if pd.isna(value) or value == "":
+    if not value:
         return None
-    res = conn.execute(
+
+    result = conn.execute(
         text(f"SELECT id FROM {table} WHERE {column} = :val"),
         {"val": value}
     ).fetchone()
-    if res:
-        return res[0]
-    res = conn.execute(
+
+    if result:
+        return result[0]
+
+    result = conn.execute(
         text(f"INSERT INTO {table} ({column}) VALUES (:val) RETURNING id"),
         {"val": value}
     ).fetchone()
-    return res[0]
+
+    return result[0]
 
 
-def parse_person(raw):
-    if pd.isna(raw):
+def get_or_create_person(conn, first_name, last_name, birth_year, death_year):
+    # 1) find person by core attributes (no names anymore)
+    result = conn.execute(text("""
+        SELECT id FROM persons
+        WHERE birth_year IS NOT DISTINCT FROM :by
+          AND death_year IS NOT DISTINCT FROM :dy
+    """), {
+        "by": birth_year,
+        "dy": death_year
+    }).fetchone()
+
+    if result:
+        person_id = result[0]
+    else:
+        result = conn.execute(text("""
+            INSERT INTO persons (birth_year, death_year)
+            VALUES (:by, :dy)
+            RETURNING id
+        """), {
+            "by": birth_year,
+            "dy": death_year
+        }).fetchone()
+
+        person_id = result[0]
+
+    # 2) insert/update names in separate table
+    if first_name or last_name:
+        existing = conn.execute(text("""
+            SELECT 1 FROM names
+            WHERE person_id = :pid
+              AND language_id = (SELECT id from LANGUAGES where est = 'est' or est = 'eesti')
+        """), {"pid": person_id}).fetchone()
+
+        if not existing:
+            conn.execute(text("""
+                INSERT INTO names (person_id, language_id, first_name, last_name)
+                VALUES (:pid, (SELECT id from LANGUAGES where est = 'est' or est = 'eesti'), :fn, :ln)
+            """), {
+                "pid": person_id,
+                "fn": first_name,
+                "ln": last_name
+            })
+
+    return person_id
+
+
+def parse_person(conn, raw):
+    if not raw or raw.strip() == "":
         return None
 
     raw = raw.strip()
 
-    try:
-        name_part, years = raw.rsplit(" ", 1)
-        last, first = [x.strip() for x in name_part.split(",", 1)]
-        birth, death = years.split("-")
-        birth = int(birth) if birth else None
-        death = int(death) if death else None
-    except:
-        return {
-            "first_name": None,
-            "last_name": raw,
-            "birth_year": None,
-            "death_year": None
-        }
+    match = re.match(r"^(.*?),\s*(.*?)\s*(\d{4})?-(\d{4})?$", raw)
+    if match:
+        last_name, first_name, birth, death = match.groups()
+        return get_or_create_person(
+            conn,
+            first_name or None,
+            last_name,
+            int(float(birth)) if birth else None,
+            int(float(death)) if death else None,
+        )
 
-    return {
-        "first_name": first,
-        "last_name": last,
-        "birth_year": birth,
-        "death_year": death
-    }
+    return get_or_create_person(conn, None, raw, None, None)
 
 
-def get_or_create_person(conn, person_dict, language_id=1):
-    if not person_dict:
-        return None
+# ---------- LOAD SIMPLE TABLES ----------
 
-    res = conn.execute(text("""
-        SELECT p.id
-        FROM PERSONS p
-        JOIN NAMES n ON n.person_id = p.id
-        WHERE n.first_name IS NOT DISTINCT FROM :first
-        AND n.last_name = :last
-        AND p.birth_year IS NOT DISTINCT FROM :birth
-        AND p.death_year IS NOT DISTINCT FROM :death
-        LIMIT 1
-    """), {
-        "first": person_dict["first_name"],
-        "last": person_dict["last_name"],
-        "birth": person_dict["birth_year"],
-        "death": person_dict["death_year"]
-    }).fetchone()
+def load_simple(file, table, column):
+    with open(file, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            value = row[column].strip()
+            if value:
+                get_or_create(conn, table, column, value)
 
-    if res:
-        return res[0]
-
-    pid = conn.execute(text("""
-        INSERT INTO PERSONS (birth_year, death_year)
-        VALUES (:birth, :death)
-        RETURNING id
-    """), {
-        "birth": person_dict["birth_year"],
-        "death": person_dict["death_year"]
-    }).fetchone()[0]
-
-    conn.execute(text("""
-        INSERT INTO NAMES (person_id, language_id, first_name, last_name)
-        VALUES (:pid, :lang, :first, :last)
-    """), {
-        "pid": pid,
-        "lang": language_id,
-        "first": person_dict["first_name"],
-        "last": person_dict["last_name"]
-    })
-
-    return pid
-
-
-def insert_m2m(conn, table, col1, col2, id1, id2):
-    if not id1 or not id2:
-        return
-    conn.execute(text(f"""
-        INSERT INTO {table} ({col1}, {col2})
-        VALUES (:id1, :id2)
-        ON CONFLICT DO NOTHING
-    """), {"id1": id1, "id2": id2})
-
-
-# --- LOAD SIMPLE TABLES ---
-
-def load_simple_table(csv_file, table, column):
-    df = pd.read_csv(csv_file)
-    with engine.begin() as conn:
-        for _, row in df.iterrows():
-            get_or_create(conn, table, column, row[column])
-
-
-load_simple_table("../../data/clean_for_sql/genres.csv", "GENRES", "est")
-load_simple_table("../../data/clean_for_sql/languages.csv", "LANGUAGES", "est")
-load_simple_table("../../data/clean_for_sql/literature.csv", "LITERATURES", "est")
-load_simple_table("../../data/clean_for_sql/publication_types.csv", "PUBLICATION_TYPES", "est")
-load_simple_table("../../data/clean_for_sql/target_audiences.csv", "TARGET_AUDIENCES", "est")
-
-load_simple_table("../../data/clean_for_sql/locations.csv", "LOCATIONS", "name")
-load_simple_table("../../data/clean_for_sql/publishers.csv", "PUBLISHERS", "name")
-load_simple_table("../../data/clean_for_sql/series.csv", "SERIES", "name")
-
-
-# --- LOAD TRANSLATIONS ---
-
-df = pd.read_csv("../../data/clean_for_sql/translations.csv")
 
 with engine.begin() as conn:
-    for _, row in df.iterrows():
 
-        publisher_id = get_or_create(conn, "PUBLISHERS", "name", row["publisher"])
-        series_id = get_or_create(conn, "SERIES", "name", row["series"])
-        target_id = get_or_create(conn, "TARGET_AUDIENCES", "est", row["target_audience"])
+    # est tables
+    for file, table in [
+        ("data/genres.csv", "genres"),
+        ("data/languages.csv", "languages"),
+        ("data/literatures.csv", "literatures"),
+        ("data/publication_types.csv", "publication_types"),
+        ("data/target_audiences.csv", "target_audiences"),
+    ]:
+        with open(file, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                val = row["est"].strip()
+                if val:
+                    get_or_create(conn, table, "est", val)
 
-        translation_id = conn.execute(text("""
-            INSERT INTO TRANSLATIONS (
-                title, title_original, publisher, publication_year,
-                physical_description, series, target_audience,
-                edition, n_pages, content, issue, notes
-            ) VALUES (
-                :title, :title_original, :publisher, :year,
-                :phys, :series, :target,
-                :edition, :pages, :content, :issue, :notes
-            ) RETURNING id
-        """), {
-            "title": row["title"],
-            "title_original": row["title_original"],
-            "publisher": publisher_id,
-            "year": row["publication_year"],
-            "phys": row["physical_description"],
-            "series": series_id,
-            "target": target_id,
-            "edition": row["edition"],
-            "pages": row["n_pages"],
-            "content": row["content"],
-            "issue": row["issue"],
-            "notes": row["notes"]
-        }).fetchone()[0]
+    # name tables
+    for file, table in [
+        ("data/locations.csv", "locations"),
+        ("data/publishers.csv", "publishers"),
+        ("data/series.csv", "series"),
+    ]:
+        with open(file, newline="", encoding="utf-8") as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                val = row["name"].strip()
+                if val:
+                    get_or_create(conn, table, "name", val)
 
-        # --- PERSON ROLES ---
-        roles = {
-            "author": "TRANSLATIONS_AUTHOR_PERSONS",
-            "translator": "TRANSLATIONS_TRANSLATOR_PERSONS",
-            "editor": "TRANSLATIONS_EDITOR_PERSONS",
-            "fore_afterword_author": "TRANSLATIONS_FORE_AFTERWORD_PERSONS"
-        }
+    # persons.csv
+    with open("data/persons.csv", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            row = row['first_name,last_name,birth_year,death_year'].split(sep=',')
+            get_or_create_person(
+                conn,
+                row[0],
+                row[1],
+                int(float(row[2])) if row[2] else None,
+                int(float(row[3])) if row[3] else None,
+            )
 
-        for col, table in roles.items():
-            persons = str(row[col]).split(";") if pd.notna(row[col]) else []
-            for p in persons:
-                pdata = parse_person(p)
-                pid = get_or_create_person(conn, pdata)
-                insert_m2m(conn, table, "translation_id", "person_id", translation_id, pid)
+    # translations.csv
+    with open("data/translations.csv", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter="\t")
 
-        # --- GENRES ---
-        genre_id = get_or_create(conn, "GENRES", "est", row["genre"])
-        insert_m2m(conn, "TRANSLATIONS_GENRES", "translation_id", "genre_id", translation_id, genre_id)
+        for row in reader:
 
-        # --- LANGUAGE ---
-        lang_id = get_or_create(conn, "LANGUAGES", "est", row["source_language"])
-        insert_m2m(conn, "TRANSLATIONS_LANGUAGES", "translation_id", "language_id", translation_id, lang_id)
+            author_id = parse_person(conn, row["author"])
+            translator_id = parse_person(conn, row["translator"])
+            editor_id = parse_person(conn, row["editor"])
+            fore_id = parse_person(conn, row["fore_afterword_author"])
 
-        # --- LITERATURE ---
-        lit_id = get_or_create(conn, "LITERATURES", "est", row["source_literature"])
-        insert_m2m(conn, "TRANSLATIONS_LITERATURES", "translation_id", "literature_id", translation_id, lit_id)
+            genre_id = get_or_create(conn, "genres", "est", row["genre"])
+            lang_id = get_or_create(conn, "languages", "est", row["source_language"])
+            lit_id = get_or_create(conn, "literatures", "est", row["source_literature"])
+            publisher_id = get_or_create(conn, "publishers", "name", row["publisher"])
+            location_id = get_or_create(conn, "locations", "name", row["publication_location"])
+            series_id = get_or_create(conn, "series", "name", row["series"])
+            pubtype_id = get_or_create(conn, "publication_types", "est", row["publication_type"])
+            audience_id = get_or_create(conn, "target_audiences", "est", row["target_audience"])
 
-        # --- LOCATION ---
-        loc_id = get_or_create(conn, "LOCATIONS", "name", row["publication_location"])
-        insert_m2m(conn, "TRANSLATIONS_LOCATIONS", "translation_id", "location_id", translation_id, loc_id)
-
-        # --- PUBLICATION TYPE ---
-        pub_type_id = get_or_create(conn, "PUBLICATION_TYPES", "est", row["publication_type"])
-        insert_m2m(conn, "TRANSLATIONS_PUBLICATION_TYPES", "translation_id", "publication_type_id", translation_id, pub_type_id)
+            conn.execute(text("""
+                INSERT INTO translations (
+                    title, title_original, publication_year,
+                    physical_description, edition, n_pages,
+                    content, issue, notes,
+                    author, translator, editor, fore_afterword_author,
+                    genre, source_language, source_literature,
+                    publisher, publication_location, series,
+                    publication_type, target_audience
+                ) VALUES (
+                    :title, :title_original, :year,
+                    :phys, :edition, :pages,
+                    :content, :issue, :notes,
+                    :author, :translator, :editor, :fore,
+                    :genre, :lang, :lit,
+                    :publisher, :location, :series,
+                    :pubtype, :audience
+                )
+            """), {
+                "title": row["title"],
+                "title_original": row["title_original"],
+                "year": int(row["publication_year"]) if row["publication_year"] else None,
+                "phys": row["physical_description"],
+                "edition": row["edition"],
+                "pages": int(row["n_pages"]) if row["n_pages"] else None,
+                "content": row["content"],
+                "issue": row["issue"],
+                "notes": row["notes"],
+                "author": author_id,
+                "translator": translator_id,
+                "editor": editor_id,
+                "fore": fore_id,
+                "genre": genre_id,
+                "lang": lang_id,
+                "lit": lit_id,
+                "publisher": publisher_id,
+                "location": location_id,
+                "series": series_id,
+                "pubtype": pubtype_id,
+                "audience": audience_id,
+            })

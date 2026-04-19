@@ -13,6 +13,11 @@ services:
       - ${PWD}/db-data/:/var/lib/postgresql/data/:z
       - ${PWD}/db/create_db.sql:/docker-entrypoint-initdb.d/create_tables.sql:z
       - ${PWD}/db/traditional_view.sql:/docker-entrypoint-initdb.d/create_views.sql:z
+    healthcheck:
+      test: pg_isready -U dbuser -d translation_db
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   backend:
     image: translation/api
@@ -23,8 +28,11 @@ services:
     volumes:
       - ${PWD}/run.sh:/app/run.sh:z
       - ${PWD}/src:/app/src:z
+      - ${PWD}/../data/clean_for_sql:/app/data:z
     env_file:
       - .env
+    depends_on:
+      - db
 
   adminer:
     image: adminer
