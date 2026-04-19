@@ -10,14 +10,11 @@ async def get_resource(json: dict) -> list[dict]:
         # for key, value in json.items():
         #     ...
 
-        result = con.execute(text('SELECT * FROM TRANSLATIONS;')).fetchall()
+        result = con.execute(text('SELECT * FROM VW_TRANSLATION_FULL;')).fetchall()
 
         result_dict = [dict(row) for row in result]
-    result.append({
-        "title": "dummy title",
-        "author": "dummy author",
-    })
-    return result
+        print(result_dict)
+    return result_dict
 
 async def create_resource(item: TranslationItem) -> str:
     conn = engine.connect()

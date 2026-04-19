@@ -33,7 +33,7 @@ async def query_traditional(
         return result
 
 @app.post("/upload_translation")
-async def create_datapoint_traditional(item: TranslationItem) -> dict[str, list]:
-    result = await create_resource(item)
+async def create_datapoint_traditional(item: TranslationItem):
+    _= await create_resource(item)
+    return
 
-    return result

@@ -9,7 +9,7 @@ const sendForm = async () => {
 
     let rdata;
     try {
-        const response = await fetch(`http://localhost:8000/query_translation?${data}`, { method: 'GET' });
+        const response = await fetch(`http://localhost:8000/query_translation/?${data}`, { method: 'GET' });
         rdata = await response.json();
     } catch (err) {
         data_div.innerHTML = '<p class="error">Could not reach the server. Please try again.</p>';
