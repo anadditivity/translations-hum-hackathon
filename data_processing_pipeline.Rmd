@@ -31,6 +31,54 @@ colnames(data_eng) <- new_names$x
 
 # translation of variable names 
 
+```{r}
+# created with the help of ChatGPT
+oop_count <- 0
+
+count_diff_vec <- function(before, after) {
+  sum((before != after) | (is.na(before) != is.na(after)), na.rm = TRUE)
+}
+
+count_diff_df <- function(before, after) {
+  # If dimensions differ, count:
+  # 1. all new rows as changes
+  # 2. plus cell-wise diffs on overlapping part
+  
+  min_rows <- min(nrow(before), nrow(after))
+  min_cols <- min(ncol(before), ncol(after))
+  
+  # compare overlapping part
+  overlap_before <- before[seq_len(min_rows), seq_len(min_cols), drop = FALSE]
+  overlap_after  <- after[seq_len(min_rows), seq_len(min_cols), drop = FALSE]
+  
+  cell_diffs <- sum(
+    (overlap_before != overlap_after) |
+    (is.na(overlap_before) != is.na(overlap_after)),
+    na.rm = TRUE
+  )
+  
+  # count extra cells from row/column expansion
+  extra_cells <- abs(nrow(after) * ncol(after) - min_rows * min_cols)
+  
+  return(cell_diffs + extra_cells)
+}
+
+track_vec <- function(vec, fn) {
+  before <- vec
+  after <- fn(vec)
+  op_count <<- op_count + count_diff_vec(before, after)
+  return(after)
+}
+
+track_df <- function(df, fn) {
+  before <- df
+  after <- fn(df)
+  op_count <<- op_count + count_diff_df(before, after)
+  return(after)
+}
+```
+
+
 ```{r, eval=F}
 # translated names 
 
@@ -73,6 +121,8 @@ write.csv(translated_names, 'data/translated_names.csv')
 Split years from 19181919 -> 1918 and 1919 separate rows 
 
 ```{r}
+before <- data_eng
+
 A <- data_eng |> filter(str_length(as.character(publication_year))==8) |> 
   mutate(publication_year = str_sub(publication_year, 1, 4))
 B <- data_eng |> filter(str_length(as.character(publication_year))==8) |> 
@@ -87,6 +137,8 @@ E <- data_eng |> filter(str_length(as.character(publication_year))==12) |>
 data_eng <- data_eng |> 
   filter(!str_length(as.character(publication_year))%in% c(8,12)) |> 
   rbind(A) |> rbind(B) |> rbind(C) |> rbind(D) |> rbind(E) 
+
+op_count <- op_count + count_diff_df(before, data_eng)
 
 rm(A,B,C,D,E)
 ```
@@ -104,6 +156,7 @@ Standardizing:
 with the first letter capitalized.
 
 ```{r}
+before <- data_eng$publication_type
 A <- data_eng |> filter(str_detect(publication_type,', ')) |> 
   mutate(publication_type = str_split_i(publication_type, ', ', i=1))
 B <- data_eng |> filter(str_detect(publication_type,', ')) |> 
@@ -117,6 +170,9 @@ data_eng <- data_eng |> mutate(publication_type = case_when(
   publication_type == "tõlkeraamat" ~ "Tõlkeraamat",
   T ~ publication_type 
 )) 
+
+op_count <- op_count + count_diff_vec(before, data_eng$publication_type)
+
 rm(A,B)
 ```
 
@@ -133,6 +189,8 @@ Standardizing:
 with the first letter capitalized.
 
 ```{r}
+before <- data_eng$target_audience
+
 A <- data_eng |> filter(str_detect(target_audience,', ')) |> 
   mutate(target_audience = str_split_i(target_audience, ', ', i=1))
 B <- data_eng |> filter(str_detect(target_audience,', ')) |> 
@@ -148,6 +206,9 @@ data_eng <- data_eng |> mutate(target_audience = case_when(
   target_audience == "Laste ja noortekirjandus" ~ "Laste- ja noortekirjandus", 
   T ~ target_audience
 ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$target_audience)
+
 rm(A,B)
 ```
 
@@ -160,6 +221,9 @@ Standardizing:
 - all values are in plural 
 
 ```{r}
+
+before <- data_eng$genre
+
 A <- data_eng |> filter(str_detect(genre,', ')) |> 
   mutate(genre = str_split_i(genre, ', ', i=1))
 B <- data_eng |> filter(str_detect(genre,', ')) |> 
@@ -183,6 +247,9 @@ data_eng <- data_eng |> mutate(genre = case_when(
   genre == "nälestused" ~ "mälestused", 
   T ~ tolower(genre)
 ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$genre)
+
 rm(A,B)
 ```
 
@@ -197,6 +264,8 @@ Standardizing:
 - hyphen '-' (dash) after every vana
 
 ```{r} 
+before <- data_eng$source_language
+
 #count the hyphens, divide and conquer
 A <- data_eng |> filter(str_count(source_language, ", ")==1) |> 
   mutate(source_language = str_split_i(source_language, ', ', i=1))
@@ -212,11 +281,15 @@ E <- data_eng |> filter(str_count(source_language, ", ")==2) |>
 
 data_eng <- data_eng |> filter(str_count(source_language, ", ")==0) |> 
   rbind(A) |> rbind(B) |> rbind(C) |> rbind(D) |> rbind(E) 
+op_count <- op_count + count_diff_vec(before, data_eng$source_language)
+
 rm(A,B,C,D,E)
 ```
 
 
 ```{r} 
+before <- data_eng$source_language
+
 data_eng <- data_eng |> mutate(source_language = case_when(
   source_language %in% c(" ", "", "teadmata", "tedamata", 
                          "teadmata/undetermined") ~ NA,
@@ -232,9 +305,14 @@ data_eng <- data_eng |> mutate(source_language = case_when(
     !str_detect(source_language, "vana-") ~ str_replace(source_language, "vana", "vana-"),
   T ~ tolower(source_language)
 )) 
+
+op_count <- op_count + count_diff_vec(before, data_eng$source_language)
+
 ```
 
 ```{r}
+before <- data_eng$source_literature
+
 A <- data_eng |> filter(str_count(source_literature, ", ")==1) |> 
   mutate(source_literature = str_split_i(source_literature, ', ', i=1))
 B <- data_eng |> filter(str_count(source_literature, ", ")==1) |> 
@@ -251,11 +329,15 @@ G <- data_eng |> filter(str_count(source_literature, ", ")==3) |>
 
 data_eng <- data_eng |> filter(str_count(source_literature, ", ")==0) |> 
   rbind(A) |> rbind(B) |> rbind(C) |> rbind(D) |> rbind(E) |> rbind(G)  
+
+op_count <- op_count + count_diff_vec(before, data_eng$source_literature)
 rm(A,B,C,D,E,G)
 ```
 
 
 ```{r}
+before <- data_eng$source_literature
+
 data_eng <- data_eng |> mutate(source_literature = case_when(
   source_literature %in% c(" ", "", "teadmata", "tedamata",
                            "teadmata/undetermined") ~ NA,
@@ -283,81 +365,115 @@ data_eng <- data_eng |> mutate(source_literature = case_when(
     !str_detect(source_literature, "vana-") ~ str_replace(source_literature, "vana", "vana-"), 
   T ~ tolower(source_literature)
 )) 
+
+op_count <- op_count + count_diff_vec(before, data_eng$source_literature)
+
 ```
 
 ## `title`
 
 ```{r}
+before <- data_eng$title
+
 data_eng$title <- data_eng$title |>  str_replace(fixed("#D"), "")
 data_eng$title <- data_eng$title|> str_replace(fixed("*"), "")
+op_count <- op_count + count_diff_vec(before, data_eng$title)
+before <- data_eng$title
 data_eng <- data_eng|> mutate(title = case_when(
     title == "" ~ NA,
     T ~ title
   ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$title)
 ```
 
 ##  `author`
 
 ```{r}
+before <- data_eng$author
 data_eng <- data_eng|> mutate(
   author = case_when(
     author == "" | author == "π" | author == "teadmata" ~ NA,
     T ~ author
   ))
+op_count <- op_count + count_diff_vec(before, data_eng$author)
 ```
 
 ## `title_original`
 
 ```{r}
+before <- data_eng$title_original
+
 data_eng <- data_eng|> mutate(title_original = case_when(
     title_original == "ˇteadmata" | title_original == "teadmata" ~ NA,
     T ~ title_original
   ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$title_original)
 ```
 
 ## `translator`
 
 ```{r}
+before <- data_eng$translator
+
 data_eng$translator <- data_eng$translator|> str_replace("<<mf>>", "") 
 data_eng$translator <- data_eng$translator|> str_replace(fixed("|d"), " ")
 data_eng <- data_eng |> mutate(translator = case_when(
     translator == "teadmata" | translator == "" ~ NA,
     T ~ translator
   ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$translator)
 ```
 
 ## `editor`
 
 ```{r}
+before <- data_eng$editor
+
 data_eng <- data_eng|> mutate(
   editor = case_when(
     editor == "" | editor == "teadmata" ~ NA,
     T ~ editor
   ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$editor)
 ```
 
 ## `fore_afterword_author`
 
 ```{r}
+before <- data_eng$fore_afterword_author
+
 data_eng$fore_afterword_author <- data_eng$fore_afterword_author |> str_replace(fixed("ˇˇ"), "")
 data_eng <- data_eng|> mutate(fore_afterword_author = case_when(
     fore_afterword_author == "" | fore_afterword_author == "teadmata" ~ NA,
     T ~ fore_afterword_author
   ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$fore_afterword_author)
 ```
 
 ## `publication_location`
 
 ```{r}
+before <- data_eng$publication_location
+
 data_eng <- data_eng |> mutate(publication_location = case_when(
     publication_location == "" | publication_location == "teadmata" ~ NA,
     T ~ publication_location
   ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$publication_location)
+
 ```
 
 ## `publisher`
 
 ```{r}
+before <- data_eng$publisher
+
 data_eng <- data_eng |> mutate(publisher = case_when(
     publisher == "" | publisher == "teadmata" ~ NA,
     publisher == "A. Tõllasepp" ~ "A. Tõllasepp", 
@@ -413,40 +529,52 @@ data_eng <- data_eng |> mutate(publisher = case_when(
     publisher == "Viroonia" ~ "Vironia", 
     T ~ publisher
   ))
+op_count <- op_count + count_diff_vec(before, data_eng$publisher)
 ```
 
 ## `physical_description`
 
 ```{r}
+before <- data_eng$physical_description
+
 data_eng$physical_description <- data_eng$physical_description |> str_replace(fixed("ˇ"), "")
 data_eng <- data_eng |> mutate(physical_description = case_when(
     physical_description == "" ~ NA,
     T ~ physical_description
   ))
+op_count <- op_count + count_diff_vec(before, data_eng$physical_description)
 ```
 
 ## `edition`
 
 ```{r}
+before <- data_eng$edition
+
 data_eng$edition <- data_eng$edition |> str_replace(fixed("ˇˇ"), "")
 data_eng <- data_eng |> mutate(edition = case_when(
     edition == "ˇˇ" | edition == "" ~ NA,
     T ~ edition
   ))
+op_count <- op_count + count_diff_vec(before, data_eng$edition)
 ```
 
 ## `series`
 
 ```{r}
+before <- data_eng$series
+
 data_eng <- data_eng |> mutate(series = case_when(
     series == "ˇˇ" | series == "" ~ NA,
     T ~ series
   ))
+op_count <- op_count + count_diff_vec(before, data_eng$source_language)
 ```
 
 ## `author_of_translated_book_under_review_to_be_removed`
 
 ```{r}
+before <- data_eng$author_of_translated_book_under_review_to_be_removed
+
 data_eng$author_of_translated_book_under_review_to_be_removed <- 
   data_eng$author_of_translated_book_under_review_to_be_removed |> 
   str_replace("<p>", "") 
@@ -467,13 +595,18 @@ data_eng <- data_eng |>
   mutate(author_of_translated_book_under_review_to_be_removed = case_when(
     author_of_translated_book_under_review_to_be_removed == "" | 
       author_of_translated_book_under_review_to_be_removed == "teadmata" ~ NA,
-    T ~ issue
+    T ~ author_of_translated_book_under_review_to_be_removed
   ))
+
+op_count <- op_count + count_diff_vec(before, data_eng$source_language)
 ```
 
 ## `issue`
 
 ```{r}
+op_count2 <- 0
+before2 <- data_eng$author_of_translated_book_under_review_to_be_removed
+
 data_eng$issue <- data_eng$issue |> str_replace("<p>", "") 
 data_eng$issue <- data_eng$issue |> str_replace("</p>", "") 
 data_eng$issue <- data_eng$issue |> str_replace('<span style="font-weight: 400">', '') 
@@ -484,6 +617,9 @@ data_eng <- data_eng |> mutate(
     issue == "" ~ NA,
     T ~ issue
   ))
+
+op_count2 <- op_count2 + count_diff_vec(before2, data_eng$source_language)
+
 ```
 
 ## `n_pages`
@@ -500,6 +636,7 @@ data_eng <- data_eng |> mutate(
 ## `content`
 
 ```{r}
+
 data_eng$content <- data_eng$content |> str_replace("<p>", "")
 data_eng$content <- data_eng$content |> str_replace("</p>", "")
 data_eng$content <- data_eng$content |> str_replace("&nbsp;", "") 
@@ -514,6 +651,7 @@ data_eng <- data_eng |> mutate(
 ## `notes` 
 
 ```{r}
+
 data_eng$notes <- data_eng$notes |> str_replace(fixed("ˇ"), "") 
 data_eng$notes <- data_eng$notes |> str_replace("<<mf>>", "")
 data_eng$notes <- data_eng$notes |> str_replace(fixed("ˇ"), "") 
@@ -528,7 +666,9 @@ data_eng <- data_eng |> mutate(
 # duplicates removal 
 
 ```{r}
-data_eng <- data_eng[!duplicated(data_eng),] 
+before2 <- data_eng
+data_eng <- data_eng[!duplicated(data_eng),]
+op_count2 <- op_count2 + count_diff_df(before2, data_eng)
 ```
 
 # write processed data
