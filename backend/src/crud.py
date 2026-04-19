@@ -1,7 +1,7 @@
-from main import TranslationItem
 from db import engine
 from sqlalchemy import select, insert, text
 from sqlalchemy.engine import Connection
+from trans_item import TranslationItem
 
 # generic function for getting information the same way the original db did
 async def get_resource(json: dict) -> list[dict]:
