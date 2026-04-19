@@ -7,13 +7,18 @@ output: html_document
 library(naniar)
 library(dplyr)
 
-data_eng_processed <- read.csv("data/processed_translation_data_3.csv")
-data_eng_processed <- data_eng_processed |> select(-X, -id)
+data_eng_processed <- read.csv("processed_translation_data_4.csv")
+data_eng_processed <- data_eng_processed |> select(-X, -id, -author_of_translated_book_under_review_to_be_removed)
 ```
 
 
 ```{r}
-vis_miss(data_eng_processed, warn_large_data = F)
+vis_miss(data_original, warn_large_data = F) 
+```
+
+
+```{r}
+vis_miss(data_eng_processed, warn_large_data = F) 
 ```
 
 ```{r}
