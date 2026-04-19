@@ -1,5 +1,3 @@
--- AI GENERATED CODE, handle with care
-
 CREATE OR REPLACE VIEW vw_translation_full AS
 SELECT
     t.id,

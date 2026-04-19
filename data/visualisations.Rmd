@@ -1,0 +1,34 @@
+---
+title: "visualisation"
+output: html_document
+---
+
+```{r}
+library(naniar)
+library(dplyr)
+
+data_eng_processed <- read.csv("processed_translation_data_4.csv")
+data_eng_processed <- data_eng_processed |> select(-X, -id, -author_of_translated_book_under_review_to_be_removed)
+```
+
+
+```{r}
+vis_miss(data_original, warn_large_data = F) 
+```
+
+
+```{r}
+vis_miss(data_eng_processed, warn_large_data = F) 
+```
+
+```{r}
+gg_miss_upset(data_eng_processed)
+```
+
+```{r}
+gg_miss_fct(x = data_eng_processed, fct = publication_type)
+```
+```{r}
+gg_miss_fct(x = data_eng_processed, fct = target_audience)
+```
+
